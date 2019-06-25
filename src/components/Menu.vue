@@ -2,66 +2,108 @@
   <div class="menu">
     <h2 class="classySubtitle">Convert from</h2>
     <div class="buttons">
-      <button :class="[selectedDecimalButton ? 'classySelectedButton' : 'classyButton']" @click="showDecimalMenu()">Decimal</button>
-      <button :class="[selectedBinaryButton ? 'classySelectedButton' : 'classyButton']" class="classyButton" @click="showBinaryMenu()">Binary</button>
+      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
     </div>
-    <div v-if="decimalMenu">
-      <h2 class="classySubtitle">to</h2>
+    <div v-if="toConvertions.length!=0">
+      <h2 class="classySubtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
       <div class="buttons">
-        <button class="classyButton" @click="showInput()">Ca1</button>
-        <button class="classyButton" @click="showInput()">Ca2</button>
-        <button class="classyButton" @click="showInput()">Simple</button>
+        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
       </div>
     </div>
-    <div v-if="binaryMenu">
-      <h2 class="classySubtitle">with type</h2>
-      <div class="buttons">
-        <button class="classyButton" @click="showInput()">Ca1</button>
-        <button class="classyButton" @click="showInput()">Ca2</button>
-        <button class="classyButton" @click="showInput()">Simple</button>
+    <div v-if="toSelected!=null">
+      <form class="classyForm" @submit.stop.prevent="makeConvertion">
+        <input class="classyInput" type="text" v-model="chain"/>
+        <div class="buttons">
+          <button class="classyButton" type="submit">Generate!</button>
+          <button class="classyButton" type="button" @click.stop.prevent="resetForm">Reset</button>
+        </div>        
+      </form>
+    </div>
+    <div class="classyProgressBarContainer" v-show="loading">
+      <div class="classyProgressBarBox">
+        <div class="classyProgressBar" ref="progressBar"></div>
       </div>
     </div>
-    <div class="classyInputBox" v-if="showInput">
-      <input class="classyInput" type="text"/><br><br>
-      <button class="classyButton" @click="convert()">Convert!</button>
+    <div v-if="result!=null">
+      <h1 class="classySubtitle classyResult">Result: {{result}}</h1>
+    </div>
+    <div v-if="showChainError">
+      <h1 class="classySubtitle classyError">Error: invalid chain</h1>
     </div>
   </div>
 </template>
 
 <script>
+  import {BinaryConverter} from '../utils/BinaryConverter.js'
+  import completeBar from '../utils/retro-progress-bar.js' 
+
   export default {
     name: 'Menu',  
     data() {
       return {
-        decimalMenu: false,
-        binaryMenu: false,
-        selectedDecimalButton: false,
-        selectedBinaryButton: false,
-        showInput: true,
+        fromConvertions: [],
+        toConvertions: [],
+        fromSelected: null,
+        toSelected: null,
+        chain: '',
+        result: null,
+        showChainError: false,
+        loading: false,
       }
     },
+    mounted() {
+      this.loadFromConvertions();
+    },
     methods: {
-      showDecimalMenu() {
-        this.hideBinaryMenu();
-        this.decimalMenu=true;
-        this.selectedDecimalButton=true;        
+      //Load initial convertions
+      loadFromConvertions(){
+        this.fromConvertions=new BinaryConverter().loadConvertions();
       },
-      showBinaryMenu() {
-        this.hideDecimalMenu();
-        this.binaryMenu=true;
-        this.selectedBinaryButton=true;
+      //Load secondary convertions when selecting an option
+      selectFromConvertion(convertion){
+        this.fromConvertions.forEach(convertion => {
+          convertion.selected=false;
+        })
+        //Would be good to select or not in the same function
+        convertion.selected=true;
+        this.fromSelected=convertion;
+        this.toConvertions=convertion.loadConvertions();
       },
-      hideDecimalMenu() {
-        this.decimalMenu=false;
-        this.selectedDecimalButton=false;
+      selectToConvertion(convertion){
+        this.toConvertions.forEach(convertion => {
+          convertion.selected=false;
+        })
+        convertion.selected=true;
+        this.toSelected=convertion;
       },
-      hideBinaryMenu() {
-        this.binaryMenu=false;
-        this.selectedBinaryButton=false;
+      resetForm(){
+        this.fromConvertions.forEach(convertion => {
+          convertion.selected=false;
+        })
+        this.toConvertions=[];
+        this.fromSelected= null;
+        this.toSelected= null;
+        this.chain= '';
+        this.result= null;
+        this.showChainError= false;
+        this.loading= false;
       },
-      showInput() {
-        this.showInput=true;
-      },
+      async makeConvertion(){
+        this.result=null;
+        this.showChainError=false;
+        //Validates the chain, then converts if valid
+        if(this.toSelected.validateChain(this.chain)){
+          this.loading=true;
+          await completeBar(this.$refs.progressBar)
+            .then(result => {
+              this.result=this.toSelected.convert(this.chain,16);
+              this.loading=false;
+            });
+        }else{
+          //Shows error if the chain is invalid
+          this.showChainError=true;
+        }
+      }
     }
   }
 </script>
@@ -111,13 +153,58 @@
     width:50%;
     font-size: 50px;
     text-align:center;
+    background-color: whitesmoke;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    margin: 40px 0px 40px 0px;
+  }
+
+  .classyForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .classyResult {
+    background-color: lightgreen;
+    border: 1px solid black;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
   }
 
-  .classyInputBox {
-    margin: 40px 0px 40px 0px;
+  .classyProgressBarContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0 0 0;
+  }
+
+  .classyProgressBarBox {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    text-align:center;
+    width:300px;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+  }
+
+  .classyProgressBar {
+    height:24px;
+    background-color: black;
+    width:25%;
+  }
+
+  .classyError {
+    background-color: lightcoral;
+    border: 1px solid black;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
   }
 </style>
 
