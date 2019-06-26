@@ -61,7 +61,13 @@ export class Ca1ToDecimalConverter {
     selected=false;
 
     convert(chain,base){
-        return '2';
+        if(chain[0]=='0'){
+            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
+        }else{
+            //Invertir números
+            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
+            //Negativizar el número resultante
+        }
     }
 
     validateChain(chain){
@@ -74,11 +80,38 @@ export class SimpleToDecimalConverter {
     selected=false;
 
     convert(chain,base){
-        return '3';
+        var returnNumber=0;
+        var chainArrayLength=chain.length-1;
+        /*
+        Take for example the chain 001101, that represents number 13 in decimal.
+        i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
+        i=4 -> 0^1
+        i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
+        i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
+        i=1 -> 0^4
+        i=0 -> 0^5
+        */
+        for(let i=chainArrayLength;i>=0;i--){
+            if(chain[i]=='1'){
+                returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
+            }            
+        }
+
+        return returnNumber;
+    }
+
+    isBinary(chain){
+        for(let i=0;i<chain.length;i++){
+            console.log('entra');
+            if(chain[i]!='0' && chain[i]!='1'){
+                return false;
+            }
+        }
+        return true;
     }
 
     validateChain(chain){
-        return parseInt(chain)!=NaN;
+        return chain!='' && !isNaN(parseInt(chain)) && this.isBinary(chain);
     }
 }
 
