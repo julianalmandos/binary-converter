@@ -155,7 +155,7 @@ export class DecimalToCa1Converter {
         //Parse to Int since chain comes as a String
         var number=parseInt(chain);
         var newChain='';
-        base=base-1;
+        base=base-1; //I should only do this if the number is positive
         if((Math.pow(2,base)-1)>=number){
             //Keep dividing by 2 until the number=0
             while(number!=0){
