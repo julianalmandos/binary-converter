@@ -2,12 +2,12 @@
   <div class="menu">
     <h2 class="classySubtitle">Convert from</h2>
     <div class="buttons">
-      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
+      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.strategy.name" @click="selectFromConvertion(convertion)">{{convertion.strategy.name}}</button>
     </div>
     <div v-if="toConvertions.length!=0">
-      <h2 class="classySubtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
+      <h2 class="classySubtitle">{{fromSelected.isFromDecimal ? 'to' : 'with chain type'}}</h2>
       <div class="buttons">
-        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
+        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.strategy.name" @click="selectToConvertion(convertion)">{{convertion.strategy.name}}</button>
       </div>
     </div>
     <div v-if="toSelected!=null">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import {BinaryConverter} from '../utils/BinaryConverter.js'
+  import {BinaryConverter, BinaryToDecimal, DecimalToBinary, Ca2ToDecimalConverter, Ca1ToDecimalConverter, SimpleToDecimalConverter, DecimalToSimpleConverter, DecimalToCa2Converter, DecimalToCa1Converter} from '../utils/BinaryConverter.js'
   import completeBar from '../utils/retro-progress-bar.js' 
 
   export default {
@@ -52,13 +52,23 @@
       }
     },
     mounted() {
-      this.loadFromConvertions();
+      var binaryToDecimal=new BinaryToDecimal();
+      binaryToDecimal.registerConvertion({'strategy':new Ca2ToDecimalConverter(),'selected':false});
+      binaryToDecimal.registerConvertion({'strategy':new Ca1ToDecimalConverter(),'selected':false});
+      binaryToDecimal.registerConvertion({'strategy':new SimpleToDecimalConverter(),'selected':false});
+
+      var decimalToBinary=new DecimalToBinary();
+      decimalToBinary.registerConvertion({'strategy':new DecimalToSimpleConverter(),'selected':false});
+      decimalToBinary.registerConvertion({'strategy':new DecimalToCa2Converter(),'selected':false});
+      decimalToBinary.registerConvertion({'strategy':new DecimalToCa1Converter(),'selected':false});
+
+      var binaryConverter=new BinaryConverter();
+      binaryConverter.registerConvertion({'strategy':decimalToBinary,'selected':false,'isFromDecimal':true});
+      binaryConverter.registerConvertion({'strategy':binaryToDecimal,'selected':false,'isFromDecimal':false});
+
+      this.fromConvertions=binaryConverter.getConvertions();
     },
     methods: {
-      //Load initial convertions
-      loadFromConvertions(){
-        this.fromConvertions=new BinaryConverter().loadConvertions();
-      },
       //Load secondary convertions when selecting an option
       selectFromConvertion(convertion){
         this.fromConvertions.forEach(convertion => {
@@ -67,7 +77,7 @@
         //Would be good to select or not in the same function
         convertion.selected=true;
         this.fromSelected=convertion;
-        this.toConvertions=convertion.loadConvertions();
+        this.toConvertions=convertion.strategy.getConvertions();
       },
       selectToConvertion(convertion){
         this.toConvertions.forEach(convertion => {
@@ -92,11 +102,11 @@
         this.result=null;
         this.showChainError=false;
         //Validates the chain, then converts if valid
-        if(this.toSelected.validateChain(this.chain)){
+        if(this.toSelected.strategy.validateChain(this.chain)){
           this.loading=true;
           await completeBar(this.$refs.progressBar)
             .then(result => {
-              this.result=this.toSelected.convert(this.chain,16);
+              this.result=this.toSelected.strategy.convert(this.chain,16);
               this.loading=false;
             });
         }else{

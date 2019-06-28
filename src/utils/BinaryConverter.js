@@ -1,51 +1,61 @@
 export class BinaryConverter {
-    loadConvertions() {
-        var convertions=[];
-        convertions.push(new BinaryToDecimal());
-        convertions.push(new DecimalToBinary());
-        return convertions;
+    convertions=[];
+
+    getConvertions() {
+        return this.convertions;
+    }
+
+    registerConvertion(convertion){
+        this.convertions.push(convertion);
     }
 }
 
 export class BinaryToDecimal {
+    convertions=[];
     name='Binary';
     selected=false;
     
-    loadConvertions() {
-        var convertions=[];
-        convertions.push(new SimpleToDecimalConverter());
-        convertions.push(new Ca1ToDecimalConverter());
-        convertions.push(new Ca2ToDecimalConverter());
-        return convertions;
+    getConvertions() {
+        return this.convertions;
+    }
+
+    registerConvertion(convertion){
+        this.convertions.push(convertion);
     }
     
+    //Will be done in the view
     isFromDecimal() {
         return false;
     }
 }
 
 export class DecimalToBinary {
+    convertions=[];
     name='Decimal';
     selected=false;
 
-    loadConvertions() {
-        var convertions=[];
-        convertions.push(new DecimalToSimpleConverter());
-        convertions.push(new DecimalToCa2Converter());
-        convertions.push(new DecimalToCa1Converter());        
-        return convertions;
+    getConvertions() {       
+        return this.convertions;
     }
 
+    registerConvertion(convertion){
+        this.convertions.push(convertion);
+    }
+
+    //Will be done in the view
     isFromDecimal() {
         return true;
     }
 }
 
+export class ConverterStrategy{
+    convert(){}
+    validateChain(){}
+}
 
 //FROM BINARY TO DECIMAL
-export class Ca2ToDecimalConverter {
+export class Ca2ToDecimalConverter extends ConverterStrategy{
     name='Ca2';
-    selected=false;
 
     convert(chain,base){
         return '1';
@@ -56,9 +66,8 @@ export class Ca2ToDecimalConverter {
     }
 }
 
-export class Ca1ToDecimalConverter {
+export class Ca1ToDecimalConverter extends ConverterStrategy{
     name='Ca1';
-    selected=false;
 
     convert(chain,base){
         if(chain[0]=='0'){
@@ -75,9 +84,8 @@ export class Ca1ToDecimalConverter {
     }
 }
 
-export class SimpleToDecimalConverter {
+export class SimpleToDecimalConverter extends ConverterStrategy{
     name='Simple';
-    selected=false;
 
     convert(chain,base){
         var returnNumber=0;
@@ -117,9 +125,8 @@ export class SimpleToDecimalConverter {
 
 
 //FROM DECIMAL TO BINARY
-export class DecimalToCa2Converter {
+export class DecimalToCa2Converter extends ConverterStrategy{
     name='Ca2';
-    selected=false;
 
     convert(chain,base){
         //Parse to Int since chain comes as a String
@@ -147,9 +154,8 @@ export class DecimalToCa2Converter {
     }
 }
 
-export class DecimalToCa1Converter {
+export class DecimalToCa1Converter extends ConverterStrategy{
     name='Ca1';
-    selected=false;
 
     convert(chain,base){
         //Parse to Int since chain comes as a String
@@ -177,9 +183,8 @@ export class DecimalToCa1Converter {
     }
 }
 
-export class DecimalToSimpleConverter {
+export class DecimalToSimpleConverter extends ConverterStrategy{
     name='Simple';
-    selected=false;
 
     convert(chain,base){
         //Parse to Int since chain comes as a String
@@ -202,6 +207,7 @@ export class DecimalToSimpleConverter {
     }
 
     validateChain(chain){
+        //Should I check for the empty string in the view?
         return chain!='' && !isNaN(parseInt(chain));
     }
 }
