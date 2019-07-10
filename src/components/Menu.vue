@@ -2,20 +2,20 @@
   <div class="menu">
     <h2 class="classySubtitle">Convert from</h2>
     <div class="buttons">
-      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.strategy.name" @click="selectFromConvertion(convertion)">{{convertion.strategy.name}}</button>
+      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
     </div>
     <div v-if="toConvertions.length!=0">
-      <h2 class="classySubtitle">{{fromSelected.isFromDecimal ? 'to' : 'with chain type'}}</h2>
+      <h2 class="classySubtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
       <div class="buttons">
-        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.strategy.name" @click="selectToConvertion(convertion)">{{convertion.strategy.name}}</button>
+        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
       </div>
     </div>
     <div v-if="toSelected!=null">
       <form class="classyForm" @submit.stop.prevent="makeConvertion">
         <input class="classyInput" type="text" v-model="chain"/>
         <div class="buttons">
-          <button class="classyButton" type="submit">Generate!</button>
-          <button class="classyButton" type="button" @click.stop.prevent="resetForm">Reset</button>
+          <button class="classySelectedButton" type="submit">Generate!</button>
+          <button class="classySelectedButton" type="button" @click.stop.prevent="resetForm">Reset</button>
         </div>        
       </form>
     </div>
@@ -52,21 +52,13 @@
       }
     },
     mounted() {
-      var binaryToDecimal=new BinaryToDecimal();
-      binaryToDecimal.registerConvertion({'strategy':new Ca2ToDecimalConverter(),'selected':false});
-      binaryToDecimal.registerConvertion({'strategy':new Ca1ToDecimalConverter(),'selected':false});
-      binaryToDecimal.registerConvertion({'strategy':new SimpleToDecimalConverter(),'selected':false});
+      var binaryConvertions=new BinaryConverter().getConvertions();
 
-      var decimalToBinary=new DecimalToBinary();
-      decimalToBinary.registerConvertion({'strategy':new DecimalToSimpleConverter(),'selected':false});
-      decimalToBinary.registerConvertion({'strategy':new DecimalToCa2Converter(),'selected':false});
-      decimalToBinary.registerConvertion({'strategy':new DecimalToCa1Converter(),'selected':false});
+      binaryConvertions.forEach(convertion => {
+        convertion.selected=false;
+      })
 
-      var binaryConverter=new BinaryConverter();
-      binaryConverter.registerConvertion({'strategy':decimalToBinary,'selected':false,'isFromDecimal':true});
-      binaryConverter.registerConvertion({'strategy':binaryToDecimal,'selected':false,'isFromDecimal':false});
-
-      this.fromConvertions=binaryConverter.getConvertions();
+      this.fromConvertions=binaryConvertions;
     },
     methods: {
       //Load secondary convertions when selecting an option
@@ -77,7 +69,8 @@
         //Would be good to select or not in the same function
         convertion.selected=true;
         this.fromSelected=convertion;
-        this.toConvertions=convertion.strategy.getConvertions();
+        this.resetToSelection();
+        this.toConvertions=convertion.getConvertions();
       },
       selectToConvertion(convertion){
         this.toConvertions.forEach(convertion => {
@@ -86,27 +79,30 @@
         convertion.selected=true;
         this.toSelected=convertion;
       },
-      resetForm(){
-        this.fromConvertions.forEach(convertion => {
-          convertion.selected=false;
-        })
-        this.toConvertions=[];
-        this.fromSelected= null;
+      resetToSelection(){
         this.toSelected= null;
         this.chain= '';
         this.result= null;
         this.showChainError= false;
         this.loading= false;
       },
+      resetForm(){
+        this.fromConvertions.forEach(convertion => {
+          convertion.selected=false;
+        })
+        this.toConvertions=[];
+        this.fromSelected= null;
+        this.resetToSelection();
+      },
       async makeConvertion(){
         this.result=null;
         this.showChainError=false;
         //Validates the chain, then converts if valid
-        if(this.toSelected.strategy.validateChain(this.chain)){
+        if(this.toSelected.validateChain(this.chain)){
           this.loading=true;
           await completeBar(this.$refs.progressBar)
             .then(result => {
-              this.result=this.toSelected.strategy.convert(this.chain,16);
+              this.result=this.toSelected.convert(this.chain,16);
               this.loading=false;
             });
         }else{
@@ -127,7 +123,7 @@
   }
 
   .classyButton {
-    background-color: lightgreen; /* Green */
+    background-color: lightcoral; /* Green */
     border: 1px solid black;
     color: black;
     padding: 10px 20px;
@@ -139,7 +135,7 @@
   }
 
   .classySelectedButton {
-    background-color: lightcoral; /* Green */
+    background-color: lightgreen; /* Green */
     border: 1px solid black;
     color: black;
     padding: 10px 20px;
