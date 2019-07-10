@@ -78,20 +78,109 @@ export class Ca2ToDecimalConverter extends BinaryToDecimal{
     name='Ca2';
 
     convert(chain,base){
-        return '1';
+        if(chain[0]=='0'){
+            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal  
+            var returnNumber=0;
+            var chainArrayLength=chain.length-1;
+            /*
+            Take for example the chain 001101, that represents number 13 in decimal.
+            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
+            i=4 -> 0^1
+            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
+            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
+            i=1 -> 0^4
+            i=0 -> 0^5
+            */
+            for(let i=chainArrayLength;i>=0;i--){
+                if(chain[i]=='1'){
+                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
+                }            
+            }
+
+            return returnNumber;
+        }else{
+            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
+            var returnNumber=0;
+            var chainArrayLength=chain.length-2;
+            /*
+            Take for example the chain 001101, that represents number 13 in decimal.
+            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
+            i=4 -> 0^1
+            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
+            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
+            i=1 -> 0^4
+            i=0 -> 0^5
+            */
+            for(let i=chainArrayLength;i>=0;i--){
+                if(chain[i]=='1'){
+                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
+                }            
+            }
+            
+            return returnNumber;
+        }
     }
 }
 
 export class Ca1ToDecimalConverter extends BinaryToDecimal{
     name='Ca1';
 
+    revertChain(chain){
+        //Can't change single characters in strings. Use XOR.
+        for(let i=0;i<chain.length;i++){
+            if(chain[i]=='0'){
+                chain[i]='1';
+            }else{
+                chain[i]='0';
+            }
+        }
+        return chain;
+    }
+
     convert(chain,base){
         if(chain[0]=='0'){
-            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
+            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal  
+            var returnNumber=0;
+            var chainArrayLength=chain.length-1;
+            /*
+            Take for example the chain 001101, that represents number 13 in decimal.
+            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
+            i=4 -> 0^1
+            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
+            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
+            i=1 -> 0^4
+            i=0 -> 0^5
+            */
+            for(let i=chainArrayLength;i>=0;i--){
+                if(chain[i]=='1'){
+                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
+                }            
+            }
+
+            return returnNumber;
         }else{
             //Invertir números
+            chain=this.revertChain(chain);
             //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
+            var returnNumber=0;
+            var chainArrayLength=chain.length-1;
+            /*
+            Take for example the chain 001101, that represents number 13 in decimal.
+            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
+            i=4 -> 0^1
+            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
+            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
+            i=1 -> 0^4
+            i=0 -> 0^5
+            */
+            for(let i=chainArrayLength;i>=0;i--){
+                if(chain[i]=='1'){
+                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
+                }            
+            }
+
             //Negativizar el número resultante
+            return returnNumber*(-1);
         }
     }
 }
