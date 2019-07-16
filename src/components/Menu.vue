@@ -12,7 +12,10 @@
     </div>
     <div v-if="toSelected!=null">
       <form class="classyForm" @submit.stop.prevent="makeConvertion">
-        <input class="classyInput" type="text" v-model="chain"/>
+        <div class="inputs">
+          <input class="classyInput" type="text" v-model="chain" placeholder="Chain"/>
+          <input v-if="fromSelected.isFromDecimal()" class="classySmallInput" type="text" v-model="bits" placeholder="Bits"/>
+        </div>
         <div class="buttons">
           <button class="classySelectedButton" type="submit">Generate!</button>
           <button class="classySelectedButton" type="button" @click.stop.prevent="resetForm">Reset</button>
@@ -49,6 +52,7 @@
         result: null,
         showChainError: false,
         loading: false,
+        bits: null,
       }
     },
     mounted() {
@@ -82,6 +86,7 @@
       resetToSelection(){
         this.toSelected= null;
         this.chain= '';
+        this.bits= '';
         this.result= null;
         this.showChainError= false;
         this.loading= false;
@@ -102,7 +107,7 @@
           this.loading=true;
           await completeBar(this.$refs.progressBar)
             .then(result => {
-              this.result=this.toSelected.convert(this.chain,16);
+              this.result=this.toSelected.convert(this.chain,this.bits);
               this.loading=false;
             });
         }else{
@@ -122,8 +127,16 @@
     align-items: center;
   }
 
+  .inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
   .classyButton {
     background-color: lightcoral; /* Green */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     color: black;
     padding: 10px 20px;
@@ -136,6 +149,7 @@
 
   .classySelectedButton {
     background-color: lightgreen; /* Green */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     color: black;
     padding: 10px 20px;
@@ -166,6 +180,17 @@
     margin: 40px 0px 40px 0px;
   }
 
+  .classySmallInput {
+    width:20%;
+    font-size: 50px;
+    text-align:center;
+    background-color: whitesmoke;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    margin: 40px 0px 40px 0px;
+  }
+
   .classyForm {
     display: flex;
     flex-direction: column;
@@ -174,6 +199,7 @@
 
   .classyResult {
     background-color: lightgreen;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
@@ -202,11 +228,13 @@
   .classyProgressBar {
     height:24px;
     background-color: black;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     width:25%;
   }
 
   .classyError {
     background-color: lightcoral;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);

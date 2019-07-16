@@ -60,8 +60,8 @@ export class DecimalToBinary extends ConverterStrategy{
         return newChain;
     }
 
-    completeWithZeros(chain){
-        while(chain.length!=16){
+    completeWithZeros(chain,bits){
+        while(chain.length!=bits){
             chain='0'+chain;
         }
         return chain;
@@ -126,7 +126,8 @@ export class Ca1ToDecimalConverter extends BinaryToDecimal{
     name='Ca1';
 
     revertChain(chain){
-        //Can't change single characters in strings. Use XOR.
+        //Can't change single characters in strings. I use #split() to convert it to an array and then #join() to make a string again.
+        chain=chain.split('');        
         for(let i=0;i<chain.length;i++){
             if(chain[i]=='0'){
                 chain[i]='1';
@@ -134,6 +135,7 @@ export class Ca1ToDecimalConverter extends BinaryToDecimal{
                 chain[i]='0';
             }
         }
+        console.log(chain.join(''));
         return chain;
     }
 
@@ -215,57 +217,57 @@ export class SimpleToDecimalConverter extends BinaryToDecimal{
 export class DecimalToCa2Converter extends DecimalToBinary{
     name='Ca2';
 
-    convert(chain,base){
+    convert(chain,bits){
         //Parse to Int since chain comes as a String
         var newChain;
         var number=parseInt(chain);
-        base=base-1;
-        if((Math.pow(2,base)-1)>=number){
+        bits=bits-1;
+        if((Math.pow(2,bits)-1)>=number){
             //Keep dividing by 2 until the number=0
             newChain=this.divideNumber(number);
             
             //Complete with 0's till 16 digits.
-            return this.completeWithZeros(newChain);
+            return this.completeWithZeros(newChain,bits+1);
         }
         
-        return 'Couldn\'t convert the given chain to a '+(base+1)+' digit binary number.';
+        return 'Couldn\'t convert the given chain to a '+(bits+1)+' digit binary number.';
     }
 }
 
 export class DecimalToCa1Converter extends DecimalToBinary{
     name='Ca1';
 
-    convert(chain,base){
+    convert(chain,bits){
         //Parse to Int since chain comes as a String
         var newChain;
         var number=parseInt(chain);
-        base=base-1; //I should only do this if the number is positive
-        if((Math.pow(2,base)-1)>=number){
+        bits=bits-1; //I should only do this if the number is positive
+        if((Math.pow(2,bits)-1)>=number){
             //Keep dividing by 2 until the number=0
             newChain=this.divideNumber(number);
             //Complete with 0's till 16 digits.
-            return this.completeWithZeros(newChain);
+            return this.completeWithZeros(newChain,bits+1);
         }
         
-        return 'Couldn\'t convert the given chain to a '+(base+1)+' digit binary number.';
+        return 'Couldn\'t convert the given chain to a '+(bits+1)+' digit binary number.';
     }
 }
 
 export class DecimalToSimpleConverter extends DecimalToBinary{
     name='Simple';
 
-    convert(chain,base){
+    convert(chain,bits){
         //Parse to Int since chain comes as a String
         var newChain;
         var number=parseInt(chain);
-        if((Math.pow(2,base)-1)>=number){
+        if((Math.pow(2,bits)-1)>=number){
             //Keep dividing by 2 until the number=0
             newChain=this.divideNumber(number);
             //Complete with 0's till 16 digits.
-            return this.completeWithZeros(newChain);
+            return this.completeWithZeros(newChain,bits);
         }
         
-        return 'Couldn\'t convert the given chain to a '+base+' digit binary number.';
+        return 'Couldn\'t convert the given chain to a '+bits+' digit binary number.';
     }
 }
 
