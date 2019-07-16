@@ -13,7 +13,7 @@
     <div v-if="toSelected!=null">
       <form class="classyForm" @submit.stop.prevent="makeConvertion">
         <div class="inputs">
-          <input class="classyInput" type="text" v-model="chain" placeholder="Chain"/>
+          <input class="classyInput" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/>
           <input v-if="fromSelected.isFromDecimal()" class="classySmallInput" type="text" v-model="bits" placeholder="Bits"/>
         </div>
         <div class="buttons">

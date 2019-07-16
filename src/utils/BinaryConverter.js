@@ -69,7 +69,7 @@ export class DecimalToBinary extends ConverterStrategy{
 
     validateChain(chain){
         //Should I check for the empty string in the view?
-        return chain!='' && !isNaN(parseInt(chain));
+        return chain!='' && !isNaN(parseInt(chain)) && chain>=0;
     }
 }
 
