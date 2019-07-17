@@ -22,6 +22,22 @@ export class BinaryToDecimal extends ConverterStrategy{
         return false;
     }
 
+    revertChain(chain){
+        //Can't change single characters in strings. I use #split() to convert it to an array and then #join() to make a string again.
+        console.log('entra '+chain);
+        chain=chain.split('');        
+        for(let i=0;i<chain.length;i++){
+            if(chain[i]=='0'){
+                chain[i]='1';
+            }else{
+                chain[i]='0';
+            }
+        }
+        console.log('sale '+chain.join(''));
+        chain=chain.join('');
+        return chain;
+    }
+
     //It's the same for all strategies
     validateChain(chain){
         return chain!='' && !isNaN(parseInt(chain)) && this.isBinary(chain);
@@ -99,9 +115,20 @@ export class Ca2ToDecimalConverter extends BinaryToDecimal{
 
             return returnNumber;
         }else{
+            //Searching for the first '1' from right to left
+            var i=chain.length-1;
+            var firstPart=[];
+            console.log(i);
+            while(chain[i]!='1'){
+                firstPart.unshift(chain[i]);
+                i--;
+            }
+            firstPart.unshift(chain[i]);
+            firstPart.unshift(this.revertChain(chain.substring(0,i)).split(''));
+            chain=firstPart.flat().join('');
             //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
             var returnNumber=0;
-            var chainArrayLength=chain.length-2;
+            var chainArrayLength=chain.length-1;
             /*
             Take for example the chain 001101, that represents number 13 in decimal.
             i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
@@ -117,27 +144,13 @@ export class Ca2ToDecimalConverter extends BinaryToDecimal{
                 }            
             }
             
-            return returnNumber;
+            return returnNumber*(-1);
         }
     }
 }
 
 export class Ca1ToDecimalConverter extends BinaryToDecimal{
     name='Ca1';
-
-    revertChain(chain){
-        //Can't change single characters in strings. I use #split() to convert it to an array and then #join() to make a string again.
-        chain=chain.split('');        
-        for(let i=0;i<chain.length;i++){
-            if(chain[i]=='0'){
-                chain[i]='1';
-            }else{
-                chain[i]='0';
-            }
-        }
-        console.log(chain.join(''));
-        return chain;
-    }
 
     convert(chain,base){
         if(chain[0]=='0'){

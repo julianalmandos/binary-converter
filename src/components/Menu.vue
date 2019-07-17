@@ -13,7 +13,7 @@
     <div v-if="toSelected!=null">
       <form class="classyForm" @submit.stop.prevent="makeConvertion">
         <div class="inputs">
-          <input class="classyInput" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/>
+          <input :class="fromSelected.isFromDecimal() ? 'classyNumberInput' : 'classyBitsInput'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/>
           <input v-if="fromSelected.isFromDecimal()" class="classySmallInput" type="text" v-model="bits" placeholder="Bits"/>
         </div>
         <div class="buttons">
@@ -169,7 +169,18 @@
     font-style: italic;
   }
 
-  .classyInput {
+  .classyBitsInput {
+    width:90%;
+    font-size: 50px;
+    text-align:center;
+    background-color: whitesmoke;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    margin: 40px 0px 40px 0px;
+  }
+
+  .classyNumberInput {
     width:50%;
     font-size: 50px;
     text-align:center;
