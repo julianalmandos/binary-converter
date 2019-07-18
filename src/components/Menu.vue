@@ -13,7 +13,7 @@
     <div v-if="toSelected!=null">
       <form class="classyForm" @submit.stop.prevent="makeConvertion">
         <div class="inputs">
-          <input :class="fromSelected.isFromDecimal() ? 'classyNumberInput' : 'classyBitsInput'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/>
+          <input :class="fromSelected.isFromDecimal() ? 'classyNumberInput' : 'classyBitsInput'" :maxlength="fromSelected.isFromDecimal() ? '' : '16'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/><input class="classyBitsCounter" v-if="!fromSelected.isFromDecimal()" :placeholder="chain.length" disabled/>
           <input v-if="fromSelected.isFromDecimal()" class="classySmallInput" type="text" v-model="bits" placeholder="Bits"/>
         </div>
         <div class="buttons">
@@ -30,8 +30,14 @@
     <div v-if="result!=null">
       <h1 class="classySubtitle classyResult">Result: {{result}}</h1>
     </div>
-    <div v-if="showChainError">
+    <div v-if="showInvalidChainError">
       <h1 class="classySubtitle classyError">Error: invalid chain</h1>
+    </div>
+    <div v-if="showMaxBitsError">
+      <h1 class="classySubtitle classyError">Error: can't generate numbers with >32 bits</h1>
+    </div>
+    <div v-if="showEmptyBitsError">
+      <h1 class="classySubtitle classyError">Error: please specify the number of bits</h1>
     </div>
   </div>
 </template>
@@ -50,7 +56,9 @@
         toSelected: null,
         chain: '',
         result: null,
-        showChainError: false,
+        showInvalidChainError: false,
+        showMaxBitsError: false,
+        showEmptyBitsError: false,
         loading: false,
         bits: null,
       }
@@ -88,7 +96,9 @@
         this.chain= '';
         this.bits= '';
         this.result= null;
-        this.showChainError= false;
+        this.showInvalidChainError= false;
+        this.showMaxBitsError= false;
+        this.showEmptyBitsError=false;
         this.loading= false;
       },
       resetForm(){
@@ -101,18 +111,29 @@
       },
       async makeConvertion(){
         this.result=null;
-        this.showChainError=false;
+        this.showMaxBitsError=false;
+        this.showEmptyBitsError=false;
+        this.showInvalidChainError=false;
         //Validates the chain, then converts if valid
         if(this.toSelected.validateChain(this.chain)){
-          this.loading=true;
-          await completeBar(this.$refs.progressBar)
-            .then(result => {
-              this.result=this.toSelected.convert(this.chain,this.bits);
-              this.loading=false;
-            });
+          if(this.bits!=''){
+            if(this.bits<=32){
+              this.loading=true;
+              await completeBar(this.$refs.progressBar)
+                .then(result => {
+                  this.result=this.toSelected.convert(this.chain,this.bits);
+                  this.loading=false;
+                });
+            }else{
+              //Shows error if the chain is invalid
+              this.showMaxBitsError=true;
+            }
+          }else{
+            this.showEmptyBitsError=true;
+          }
         }else{
           //Shows error if the chain is invalid
-          this.showChainError=true;
+          this.showInvalidChainError=true;
         }
       }
     }
@@ -170,7 +191,7 @@
   }
 
   .classyBitsInput {
-    width:90%;
+    width:60%;
     font-size: 50px;
     text-align:center;
     background-color: whitesmoke;
@@ -193,6 +214,17 @@
 
   .classySmallInput {
     width:20%;
+    font-size: 50px;
+    text-align:center;
+    background-color: whitesmoke;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    margin: 40px 0px 40px 0px;
+  }
+
+  .classyBitsCounter {
+    width:10%;
     font-size: 50px;
     text-align:center;
     background-color: whitesmoke;
