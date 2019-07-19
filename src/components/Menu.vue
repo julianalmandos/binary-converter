@@ -30,6 +30,9 @@
     <div v-if="result!=null">
       <h1 class="classySubtitle classyResult">Result: {{result}}</h1>
     </div>
+    <div v-if="resultError">
+      <h1 class="classySubtitle classyWarning">Result: {{resultError.message}}</h1>
+    </div>
     <div v-if="error">
       <h1 class="classySubtitle classyError">Error: {{error.message}}</h1>
     </div>
@@ -38,7 +41,7 @@
 
 <script>
   import {BinaryConverter, BinaryToDecimal, DecimalToBinary, Ca2ToDecimalConverter, Ca1ToDecimalConverter, SimpleToDecimalConverter, DecimalToSimpleConverter, DecimalToCa2Converter, DecimalToCa1Converter} from '../utils/BinaryConverter.js'
-  import completeBar from '../utils/retro-progress-bar.js' 
+  import completeBar from '../utils/retro-progress-bar.js'
 
   export default {
     name: 'Menu',  
@@ -50,6 +53,7 @@
         toSelected: null,
         chain: '',
         result: null,
+        resultError: null,
         error: null,
         showLoadingBar: false,
         bits: null,
@@ -89,6 +93,7 @@
         this.bits='';
         this.result=null;
         this.error=null;
+        this.resultError=null;
       },
       resetForm(){
         this.fromConvertions.forEach(convertion => {
@@ -101,16 +106,22 @@
       async makeConvertion(){
         this.result=null;
         this.error=null;
+        this.resultError=null;
         //Validates the chain, then converts if valid
         if(this.toSelected.validateChain(this.chain)){
-          if(this.bits!=''){
+          if(this.bits!='' | (!this.fromSelected.isFromDecimal())){
             if(this.bits<=32){
               this.showLoadingBar=true;
               await completeBar(this.$refs.progressBar)
                 .then(result => {
                   this.result=this.toSelected.convert(this.chain,this.bits);
+                })
+                .catch(error => {
+                  this.resultError=error;
+                })
+                .finally(() => {
                   this.showLoadingBar=false;
-                });
+                })
             }else{
               //Shows error if the chain is invalid
               this.error={message:'can\'t generate numbers with >32 bits'};
@@ -143,7 +154,7 @@
   }
 
   .classyButton {
-    background-color: lightcoral; /* Green */
+    background-color: lightcoral;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     color: black;
@@ -156,7 +167,7 @@
   }
 
   .classySelectedButton {
-    background-color: lightgreen; /* Green */
+    background-color: lightgreen;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
     color: black;
@@ -231,6 +242,8 @@
     background-color: lightgreen;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
+    margin-left: 15px;
+    margin-right: 15px;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
@@ -266,6 +279,19 @@
     background-color: lightcoral;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
+    margin-left: 15px;
+    margin-right: 15px;
+    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+  }
+
+  .classyWarning {
+    background-color: lemonchiffon;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
+    border: 1px solid black;
+    margin-left: 15px;
+    margin-right: 15px;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
     box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);

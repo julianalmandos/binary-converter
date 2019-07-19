@@ -1,3 +1,5 @@
+import {InsufficientBits} from './Exceptions.js';
+
 export class BinaryConverter {
     convertions=[];
 
@@ -7,20 +9,6 @@ export class BinaryConverter {
 }
 
 export class ConverterStrategy{
-    
-}
-
-export class BinaryToDecimal extends ConverterStrategy{
-    name='Binary';
-    
-    getConvertions() {
-        return [new SimpleToDecimalConverter(), new Ca1ToDecimalConverter(), new Ca2ToDecimalConverter()];
-    }
-    
-    //Will be done in the view
-    isFromDecimal() {
-        return false;
-    }
 
     revertChain(chain){
         //Can't change single characters in strings. I use #split() to convert it to an array and then #join() to make a string again.
@@ -36,6 +24,20 @@ export class BinaryToDecimal extends ConverterStrategy{
         console.log('sale '+chain.join(''));
         chain=chain.join('');
         return chain;
+    }
+    
+}
+
+export class BinaryToDecimal extends ConverterStrategy{
+    name='Binary';
+    
+    getConvertions() {
+        return [new SimpleToDecimalConverter(), new Ca1ToDecimalConverter(), new Ca2ToDecimalConverter()];
+    }
+    
+    //Will be done in the view
+    isFromDecimal() {
+        return false;
     }
 
     //It's the same for all strategies
@@ -85,7 +87,7 @@ export class DecimalToBinary extends ConverterStrategy{
 
     validateChain(chain){
         //Should I check for the empty string in the view?
-        return chain!='' && !isNaN(parseInt(chain)) && chain>=0;
+        return chain!='' && !isNaN(parseInt(chain));
     }
 }
 
@@ -243,7 +245,7 @@ export class DecimalToCa2Converter extends DecimalToBinary{
             return this.completeWithZeros(newChain,bits+1);
         }
         
-        return 'Couldn\'t convert the given chain to a '+(bits+1)+' digit binary number.';
+        throw new InsufficientBits(bits+1);
     }
 }
 
@@ -254,15 +256,18 @@ export class DecimalToCa1Converter extends DecimalToBinary{
         //Parse to Int since chain comes as a String
         var newChain;
         var number=parseInt(chain);
+        if(number<0){number=number*(-1)}
         bits=bits-1; //I should only do this if the number is positive
         if((Math.pow(2,bits)-1)>=number){
             //Keep dividing by 2 until the number=0
             newChain=this.divideNumber(number);
             //Complete with 0's till 16 digits.
-            return this.completeWithZeros(newChain,bits+1);
+            if(chain>=0){return this.completeWithZeros(newChain,bits+1);}
+            return this.revertChain(this.completeWithZeros(newChain,bits+1));
+            
         }
         
-        return 'Couldn\'t convert the given chain to a '+(bits+1)+' digit binary number.';
+        throw new InsufficientBits(bits+1);
     }
 }
 
@@ -280,7 +285,12 @@ export class DecimalToSimpleConverter extends DecimalToBinary{
             return this.completeWithZeros(newChain,bits);
         }
         
-        return 'Couldn\'t convert the given chain to a '+bits+' digit binary number.';
+        throw new InsufficientBits(bits);
+    }
+
+    validateChain(chain){
+        return chain>=0 && super.validateChain(chain);
     }
 }
 
+//Response {error: true/false, response: errorMsg/chain}
