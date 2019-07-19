@@ -95,7 +95,7 @@ export class Ca2ToDecimalConverter extends BinaryToDecimal{
 
     convert(chain,base){
         if(chain[0]=='0'){
-            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal  
+            //Same as Simple to Decimal
             var returnNumber=0;
             var chainArrayLength=chain.length-1;
             /*
@@ -154,7 +154,7 @@ export class Ca1ToDecimalConverter extends BinaryToDecimal{
 
     convert(chain,base){
         if(chain[0]=='0'){
-            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal  
+            //Same as Simple to Decimal
             var returnNumber=0;
             var chainArrayLength=chain.length-1;
             /*
@@ -194,7 +194,7 @@ export class Ca1ToDecimalConverter extends BinaryToDecimal{
                 }            
             }
 
-            //Negativizar el número resultante
+            //Make negative
             return returnNumber*(-1);
         }
     }

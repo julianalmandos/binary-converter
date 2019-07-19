@@ -22,7 +22,7 @@
         </div>        
       </form>
     </div>
-    <div class="classyProgressBarContainer" v-show="loading">
+    <div class="classyProgressBarContainer" v-show="showLoadingBar">
       <div class="classyProgressBarBox">
         <div class="classyProgressBar" ref="progressBar"></div>
       </div>
@@ -30,14 +30,8 @@
     <div v-if="result!=null">
       <h1 class="classySubtitle classyResult">Result: {{result}}</h1>
     </div>
-    <div v-if="showInvalidChainError">
-      <h1 class="classySubtitle classyError">Error: invalid chain</h1>
-    </div>
-    <div v-if="showMaxBitsError">
-      <h1 class="classySubtitle classyError">Error: can't generate numbers with >32 bits</h1>
-    </div>
-    <div v-if="showEmptyBitsError">
-      <h1 class="classySubtitle classyError">Error: please specify the number of bits</h1>
+    <div v-if="error">
+      <h1 class="classySubtitle classyError">Error: {{error.message}}</h1>
     </div>
   </div>
 </template>
@@ -56,10 +50,8 @@
         toSelected: null,
         chain: '',
         result: null,
-        showInvalidChainError: false,
-        showMaxBitsError: false,
-        showEmptyBitsError: false,
-        loading: false,
+        error: null,
+        showLoadingBar: false,
         bits: null,
       }
     },
@@ -92,48 +84,43 @@
         this.toSelected=convertion;
       },
       resetToSelection(){
-        this.toSelected= null;
-        this.chain= '';
-        this.bits= '';
-        this.result= null;
-        this.showInvalidChainError= false;
-        this.showMaxBitsError= false;
-        this.showEmptyBitsError=false;
-        this.loading= false;
+        this.toSelected=null;
+        this.chain='';
+        this.bits='';
+        this.result=null;
+        this.error=null;
       },
       resetForm(){
         this.fromConvertions.forEach(convertion => {
           convertion.selected=false;
         })
         this.toConvertions=[];
-        this.fromSelected= null;
+        this.fromSelected=null;
         this.resetToSelection();
       },
       async makeConvertion(){
         this.result=null;
-        this.showMaxBitsError=false;
-        this.showEmptyBitsError=false;
-        this.showInvalidChainError=false;
+        this.error=null;
         //Validates the chain, then converts if valid
         if(this.toSelected.validateChain(this.chain)){
           if(this.bits!=''){
             if(this.bits<=32){
-              this.loading=true;
+              this.showLoadingBar=true;
               await completeBar(this.$refs.progressBar)
                 .then(result => {
                   this.result=this.toSelected.convert(this.chain,this.bits);
-                  this.loading=false;
+                  this.showLoadingBar=false;
                 });
             }else{
               //Shows error if the chain is invalid
-              this.showMaxBitsError=true;
+              this.error={message:'can\'t generate numbers with >32 bits'};
             }
           }else{
-            this.showEmptyBitsError=true;
+            this.error={message:'please specify the number of bits'};
           }
         }else{
           //Shows error if the chain is invalid
-          this.showInvalidChainError=true;
+          this.error={message:'invalid chain'};
         }
       }
     }
