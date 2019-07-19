@@ -25,3 +25,5 @@ What's coming up in the future:
 ## Preview
 
 The app is now live on Netlify: [Binary Converter](https://binary-to-decimal.netlify.com/)
+
+![](https://i.imgur.com/nzUDnHQ.png)
