@@ -6,12 +6,16 @@
       <router-link to="/about">About</router-link>
     </div>-->
     <div class="classyMenu classyRightMenu">
-      <button class="classyLanguageButton">_</button>
-      <button class="classyLanguageButton">■</button>
-      <button class="classyLanguageButton">X</button>
+      <button class="classyMenuButton">_</button>
+      <button class="classyMenuButton">■</button>
+      <button class="classyMenuButton">X</button>
     </div>
     <div class="classyMenu classyLeftMenu">
-      <button class="classyLanguageButton">Menu</button>
+      <button class="classyMenuButton" @click="openDropdown()">Menu</button>
+      <div class="classyDropdown" v-if="showDropdown">
+        <button class="classyMenuButton">Record</button>
+        <button class="classyMenuButton">Language</button>
+      </div>
     </div>
     <router-view/>
     <div class="classyBottomBar">
@@ -19,6 +23,25 @@
     </div>
   </div>
 </template>
+
+<script>
+
+  export default {
+    name: 'App',
+    data() {
+      return {
+        showDropdown: false,
+      }
+    },
+    methods: {
+      openDropdown(){
+        this.showDropdown=!this.showDropdown;
+      }
+    }
+  }
+
+</script>
+
 
 <style>
 
@@ -43,6 +66,8 @@
 
   .classyLeftMenu {
     left: 5%;
+    display: flex;
+    flex-direction: column;
   }
 
   .classyRightMenu {
@@ -60,7 +85,7 @@
     bottom: 5%
   }
 
-  .classyLanguageButton {
+  .classyMenuButton {
     background-color: grey;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
     border: 1px solid black;
@@ -74,10 +99,17 @@
     box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
   }
 
-  .classyLanguageButton:hover {
+  .classyMenuButton:hover {
     background-color: white;
     color:black;
     cursor: pointer;
+  }
+
+  .classyDropdown {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-top:5px;
   }
 
 </style>
