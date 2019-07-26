@@ -11,7 +11,8 @@
       <button class="classyMenuButton">X</button>
     </div>
     <div class="classyMenu classyLeftMenu">
-      <button class="classyMenuButton" @click="openDropdown()">Menu</button>
+      <button class="classyMenuButton">Records</button>
+      <button class="classyMenuButton">Language</button>
       <div class="classyDropdown" v-if="showDropdown">
         <button class="classyMenuButton">Record</button>
         <button class="classyMenuButton">Language</button>
@@ -92,6 +93,7 @@
     color: white;
     padding: 10px 20px;
     margin-left: 7px;
+    margin-bottom: 5px;
     text-align: center;
     font-size: 16px;
     -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
