@@ -42,6 +42,7 @@
 <script>
   import {BinaryConverter, BinaryToDecimal, DecimalToBinary, Ca2ToDecimalConverter, Ca1ToDecimalConverter, SimpleToDecimalConverter, DecimalToSimpleConverter, DecimalToCa2Converter, DecimalToCa1Converter} from '../utils/BinaryConverter.js'
   import completeBar from '../utils/retro-progress-bar.js'
+  import Vuex from 'vuex'
 
   export default {
     name: 'Menu',  
@@ -69,6 +70,9 @@
       this.fromConvertions=binaryConvertions;
     },
     methods: {
+      ...Vuex.mapActions([
+        'addRecordAction',
+      ]),
       //Load secondary convertions when selecting an option
       selectFromConvertion(convertion){
         this.fromConvertions.forEach(convertion => {
@@ -115,6 +119,7 @@
               await completeBar(this.$refs.progressBar)
                 .then(result => {
                   this.result=this.toSelected.convert(this.chain,this.bits);
+                  this.recordOperation();
                 })
                 .catch(error => {
                   this.resultError=error;
@@ -133,6 +138,15 @@
           //Shows error if the chain is invalid
           this.error={message:'invalid chain'};
         }
+      },
+      recordOperation(){
+        this.addRecordAction({
+          from: this.fromSelected.name,
+          to: this.toSelected.name,
+          chain: this.chain,
+          bits: this.bits,
+          result: this.result,
+        })
       }
     }
   }
