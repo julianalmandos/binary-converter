@@ -1,0 +1,24 @@
+:root {
+  /* COLORS */
+  --primaryRed: lightcoral;
+  --primaryGreen: lightgreen;
+  --primaryWhite: whitesmoke;
+  --primaryYellow: lemonchiffon;
+  --black: black;
+
+  /* SHADOWS */
+  --classyShadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
+
+  /* MISC */
+  --dotBackground: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
+}
+
+.classy-shadow {
+  -webkit-box-shadow: var(--classyShadow);
+  -moz-box-shadow: var(--classyShadow);
+  box-shadow: var(--classyShadow);
+}
+
+.dotted {
+  background-image: var(--dotBackground);
+}
