@@ -1,40 +1,40 @@
 <template>
   <div class="menu">
-    <h2 class="classySubtitle">Convert from</h2>
-    <div class="buttons">
-      <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
+    <h2 class="classy-subtitle">Convert from</h2>
+    <div class="flex-around">
+      <button :class="[convertion.selected ? 'classy-selected-button' : null, 'classy-button', 'classy-shadow', 'dotted']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
     </div>
     <div v-if="toConvertions.length!=0">
-      <h2 class="classySubtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
-      <div class="buttons">
-        <button :class="[convertion.selected ? 'classySelectedButton' : 'classyButton']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
+      <h2 class="classy-subtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
+      <div class="flex-around">
+        <button :class="[convertion.selected ? 'classy-selected-button' : null, 'classy-button', 'classy-shadow', 'dotted']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
       </div>
     </div>
     <div v-if="toSelected!=null">
-      <form class="classyForm" @submit.stop.prevent="makeConvertion">
-        <div class="inputs">
-          <input :class="fromSelected.isFromDecimal() ? 'classyNumberInput' : 'classyBitsInput'" :maxlength="fromSelected.isFromDecimal() ? '' : '16'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/><input class="classyBitsCounter" v-if="!fromSelected.isFromDecimal()" :placeholder="chain.length" disabled/>
-          <input v-if="fromSelected.isFromDecimal()" class="classySmallInput" type="text" v-model="bits" placeholder="Bits"/>
+      <form class="classy-form" @submit.stop.prevent="makeConvertion">
+        <div class="flex-around">
+          <input :class="[fromSelected.isFromDecimal() ? 'classy-number-input' : 'classy-bits-input', 'classy-shadow', 'classy-input']" :maxlength="fromSelected.isFromDecimal() ? '' : '16'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/><input class="classy-bits-counter classy-shadow classy-input" v-if="!fromSelected.isFromDecimal()" :placeholder="chain.length" disabled/>
+          <input v-if="fromSelected.isFromDecimal()" class="classy-small-input classy-shadow classy-input" type="text" v-model="bits" placeholder="Bits"/>
         </div>
-        <div class="buttons">
-          <button class="classySelectedButton" type="submit">Generate!</button>
-          <button class="classySelectedButton" type="button" @click.stop.prevent="resetForm">Reset</button>
+        <div class="flex-around">
+          <button class="classy-button classy-selected-button classy-shadow dotted" type="submit">Generate!</button>
+          <button class="classy-button classy-selected-button classy-shadow dotted" type="button" @click.stop.prevent="resetForm">Reset</button>
         </div>        
       </form>
     </div>
-    <div class="classyProgressBarContainer" v-show="showLoadingBar">
-      <div class="classyProgressBarBox">
-        <div class="classyProgressBar" ref="progressBar"></div>
+    <div class="classy-progress-bar-container" v-show="showLoadingBar">
+      <div class="classy-progress-bar-box classy-shadow">
+        <div class="classy-progress-bar dotted" ref="progressBar"></div>
       </div>
     </div>
     <div v-if="result!=null">
-      <h1 class="classySubtitle classyResult">Result: {{result}}</h1>
+      <h1 class="classy-subtitle classy-end classy-result classy-shadow dotted">Result: {{result}}</h1>
     </div>
     <div v-if="resultError">
-      <h1 class="classySubtitle classyWarning">Result: {{resultError.message}}</h1>
+      <h1 class="classy-subtitle classy-end classy-warning classy-shadow dotted">Result: {{resultError.message}}</h1>
     </div>
     <div v-if="error">
-      <h1 class="classySubtitle classyError">Error: {{error.message}}</h1>
+      <h1 class="classy-subtitle classy-end classy-error classy-shadow dotted">Error: {{error.message}}</h1>
     </div>
   </div>
 </template>
@@ -153,163 +153,97 @@
 </script>
 
 <style>
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-  }
 
-  .inputs {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-  }
+.flex-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
-  .classyButton {
-    background-color: lightcoral;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    color: black;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 16px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+/* FIXME: these buttons should be a different component */
+.classy-button {
+  border: 1px solid var(--black);
+  color: var(--black);
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+}
 
-  .classySelectedButton {
-    background-color: lightgreen;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    color: black;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 16px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+.classy-error, .classy-button {
+  background-color: var(--primaryRed);
+}
 
-  .classyButton:hover, .classySelectedButton:hover {
-    background-color: white;
-    cursor: pointer;
-  }
+.classy-selected-button, .classy-result {
+  background-color: var(--primaryGreen);
+}
 
-  .classySubtitle {
-    font-style: italic;
-  }
+.classy-button:hover, .classy-selected-button:hover {
+  background-color: whitesmoke;
+  cursor: pointer;
+}
 
-  .classyBitsInput {
-    width:60%;
-    font-size: 50px;
-    text-align:center;
-    background-color: whitesmoke;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    margin: 40px 0px 40px 0px;
-  }
+.classy-subtitle {
+  font-style: italic;
+}
 
-  .classyNumberInput {
-    width:50%;
-    font-size: 50px;
-    text-align:center;
-    background-color: whitesmoke;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    margin: 40px 0px 40px 0px;
-  }
+.classy-input {
+  font-size: 3rem;
+  text-align:center;
+  background-color: var(--primaryWhite);
+  border: 1px solid var(--black);
+  margin: 40px 0px;
+}
 
-  .classySmallInput {
-    width:20%;
-    font-size: 50px;
-    text-align:center;
-    background-color: whitesmoke;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    margin: 40px 0px 40px 0px;
-  }
+.classy-bits-input, .menu {
+  width:60%;
+}
 
-  .classyBitsCounter {
-    width:10%;
-    font-size: 50px;
-    text-align:center;
-    background-color: whitesmoke;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    margin: 40px 0px 40px 0px;
-  }
+.classy-number-input {
+  width:50%;
+}
 
-  .classyForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.classy-small-input {
+  width:20%;
+}
 
-  .classyResult {
-    background-color: lightgreen;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    margin-left: 15px;
-    margin-right: 15px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+.classy-bits-counter {
+  width:10%;
+}
 
-  .classyProgressBarContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 40px 0 0 0;
-  }
+.classy-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .classyProgressBarBox {
-    display: flex;
-    flex-direction: row;
-    border: 1px solid black;
-    text-align:center;
-    width:300px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+.classy-progress-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0 0 0;
+}
 
-  .classyProgressBar {
-    height:24px;
-    background-color: black;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    width:25%;
-  }
+.classy-progress-bar-box {
+  display: flex;
+  border: 1px solid var(--black);
+  text-align: center;
+  width: 300px;
+}
 
-  .classyError {
-    background-color: lightcoral;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    margin-left: 15px;
-    margin-right: 15px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+.classy-progress-bar {
+  height: 24px;
+  background-color: var(--black);
+  width: 25%;
+}
 
-  .classyWarning {
-    background-color: lemonchiffon;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    margin-left: 15px;
-    margin-right: 15px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
+.classy-end {
+  border: 1px solid var(--black);
+  margin: 0 15px;
+}
+
+.classy-warning {
+  background-color: var(--primaryYellow);
+}
 </style>
 
 

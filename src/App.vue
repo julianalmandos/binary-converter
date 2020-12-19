@@ -1,26 +1,23 @@
 <template>
   <div id="app">
-    <!--
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>-->
-    <div class="classyMenu classyRightMenu">
-      <button class="classyMenuButton">_</button>
-      <button class="classyMenuButton">■</button>
-      <button class="classyMenuButton">X</button>
-    </div>
-    <div class="classyMenu classyLeftMenu">
-      <button class="classyMenuButton">Records</button>
-      <button class="classyMenuButton">Language</button>
-      <div class="classyDropdown" v-if="showDropdown">
-        <button class="classyMenuButton">Record</button>
-        <button class="classyMenuButton">Language</button>
+    <div class="main-content">
+      <div class="classy-menu classy-right-menu">
+        <button class="classy-menu-button classy-shadow dotted">_</button>
+        <button class="classy-menu-button classy-shadow dotted">■</button>
+        <button class="classy-menu-button classy-shadow dotted">X</button>
       </div>
+      <div class="classy-menu classy-left-menu">
+        <button class="classy-menu-button classy-shadow dotted">Records</button>
+        <button class="classy-menu-button classy-shadow dotted">Language</button>
+        <div class="classy-dropdown" v-if="showDropdown">
+          <button class="classy-menu-button classy-shadow dotted">Record</button>
+          <button class="classy-menu-button classy-shadow dotted">Language</button>
+        </div>
+      </div>
+      <router-view class="view"/>
     </div>
-    <router-view/>
-    <div class="classyBottomBar">
-      <span>Made with ♥ by <a class="classyLink" href="http://github.com/julianalmandos">Julian Almandos</a> in 2019</span>
+    <div class="classy-bottom-bar">
+      <span>Made with ♥ by <a class="classy-link" href="http://github.com/julianalmandos">Julian Luis Almandos</a> in 2019-2020</span>
     </div>
   </div>
 </template>
@@ -46,72 +43,100 @@
 
 <style>
 
-  #app {
-    padding: 50px 500px 50px 500px;
-    font-family: "Courier";
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #333;
+#app {
+  min-height: 100vh;
+  font-family: "Courier";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+body, html {
+  box-sizing: border-box;
+  margin: 0;
+  background-image: var(--dotBackground);
+}
+
+button, input { 
+  font-family: inherit;
+}
+
+.classy-menu {
+  position: absolute;
+  display: flex;
+  top: 5%;
+}
+
+.classy-left-menu {
+  left: 5%;
+  flex-direction: column;
+}
+
+.classy-right-menu {
+  right: 5%;
+}
+
+.classy-left-menu > .classy-menu-button:not(:first-child) {
+  margin-top: 15px;
+}
+
+.classy-right-menu > .classy-menu-button:not(:first-child) {
+  margin-left: 15px;
+}
+
+.classy-link {
+  color: var(--black);
+}
+
+.classy-link:hover {
+  text-decoration: none;
+}
+
+.classy-bottom-bar {
+  padding: 6px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-content {
+  flex: 1 1 100%;
+}
+
+.classy-menu-button {
+  background-color: grey;
+  border: 1px solid var(--black);
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.classy-menu-button:hover {
+  background-color: white;
+  color: var(--black);
+  cursor: pointer;
+}
+
+/*FIXME: decide what to do with the menu in mobile sizes*/
+@media (max-width: 720px) {
+  .classy-menu {
+    position: static;
+    width: 80%;
+    margin: 20px auto;
+    display: none;
   }
 
-  button, input { 
-    font-family: "Courier";
+  .classy-right-menu {
+    display: none;
   }
 
-  .classyMenu {
-    position: fixed;
-    display: flex;
-    flex-direction: row;
+  .classy-bottom-bar {
+    font-weight: bold;
+    line-height: 1.4;
   }
-
-  .classyLeftMenu {
-    left: 5%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .classyRightMenu {
-    right: 5%;
-  }
-
-  .classyLink {
-    color: black;
-  }
-
-  .classyBottomBar {
-    position: fixed;
-    width:90%;
-    left:5%;
-    bottom: 5%
-  }
-
-  .classyMenuButton {
-    background-color: grey;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-    border: 1px solid black;
-    color: white;
-    padding: 10px 20px;
-    margin-left: 7px;
-    margin-bottom: 5px;
-    text-align: center;
-    font-size: 16px;
-    -webkit-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 0px -1px rgba(0,0,0,0.75);
-  }
-
-  .classyMenuButton:hover {
-    background-color: white;
-    color:black;
-    cursor: pointer;
-  }
-
-  .classyDropdown {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    margin-top:5px;
-  }
+}
 
 </style>
