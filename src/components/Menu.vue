@@ -2,39 +2,73 @@
   <div class="menu">
     <h2 class="classy-subtitle">Convert from</h2>
     <div class="flex-around">
-      <button :class="[convertion.selected ? 'classy-selected-button' : null, 'classy-button', 'classy-shadow', 'dotted']" v-for="convertion in fromConvertions" :key="convertion.name" @click="selectFromConvertion(convertion)">{{convertion.name}}</button>
+      <Button
+        :theme="convertion.selected ? 'green' : null"
+        v-for="convertion in fromConvertions"
+        :key="convertion.name"
+        @click="selectFromConvertion(convertion)"
+      >{{convertion.name}}</Button>
     </div>
     <div v-if="toConvertions.length!=0">
       <h2 class="classy-subtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
       <div class="flex-around">
-        <button :class="[convertion.selected ? 'classy-selected-button' : null, 'classy-button', 'classy-shadow', 'dotted']" v-for="convertion in toConvertions" :key="convertion.name" @click="selectToConvertion(convertion)">{{convertion.name}}</button>
+        <Button
+          :theme="convertion.selected ? 'green' : null"
+          v-for="convertion in toConvertions"
+          :key="convertion.name"
+          @click="selectToConvertion(convertion)"
+        >{{convertion.name}}</Button>
       </div>
     </div>
     <div v-if="toSelected!=null">
       <form class="classy-form" @submit.stop.prevent="makeConvertion">
         <div class="flex-around">
-          <input :class="[fromSelected.isFromDecimal() ? 'classy-number-input' : 'classy-bits-input', 'classy-shadow', 'classy-input']" :maxlength="fromSelected.isFromDecimal() ? '' : '16'" type="text" v-model="chain" :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/><input class="classy-bits-counter classy-shadow classy-input" v-if="!fromSelected.isFromDecimal()" :placeholder="chain.length" disabled/>
-          <input v-if="fromSelected.isFromDecimal()" class="classy-small-input classy-shadow classy-input" type="text" v-model="bits" placeholder="Bits"/>
+          <Input
+            :class="[fromSelected.isFromDecimal() ? 'classy-number-input' : 'classy-bits-input']"
+            :maxlength="fromSelected.isFromDecimal() ? '' : '16'"
+            type="text"
+            v-model="chain"
+            :placeholder="fromSelected.isFromDecimal() ? 'Number' : 'Chain'"/>
+          <Input
+            v-if="!fromSelected.isFromDecimal()"
+            class="classy-bits-counter"
+            :placeholder="chain.length"
+            disabled/>
+          <Input
+            v-else
+            class="classy-small-input"
+            type="text"
+            v-model="bits"
+            placeholder="Bits"/>
         </div>
-        <div class="flex-around">
-          <button class="classy-button classy-selected-button classy-shadow dotted" type="submit">Generate!</button>
-          <button class="classy-button classy-selected-button classy-shadow dotted" type="button" @click.stop.prevent="resetForm">Reset</button>
+        <div class="flex-around form-buttons">
+          <Button
+            class="shadow dotted"
+            :theme="'green'"
+            type="submit"
+          >Generate!</Button>
+          <Button
+            class="shadow dotted"
+            :theme="'yellow'"
+            type="button"
+            @click="resetForm"
+          >Reset</Button>
         </div>        
       </form>
     </div>
     <div class="classy-progress-bar-container" v-show="showLoadingBar">
-      <div class="classy-progress-bar-box classy-shadow">
+      <div class="classy-progress-bar-box shadow">
         <div class="classy-progress-bar dotted" ref="progressBar"></div>
       </div>
     </div>
     <div v-if="result!=null">
-      <h1 class="classy-subtitle classy-end classy-result classy-shadow dotted">Result: {{result}}</h1>
+      <h1 class="classy-subtitle classy-end classy-result shadow dotted">Result: {{result}}</h1>
     </div>
     <div v-if="resultError">
-      <h1 class="classy-subtitle classy-end classy-warning classy-shadow dotted">Result: {{resultError.message}}</h1>
+      <h1 class="classy-subtitle classy-end classy-warning shadow dotted">Result: {{resultError.message}}</h1>
     </div>
     <div v-if="error">
-      <h1 class="classy-subtitle classy-end classy-error classy-shadow dotted">Error: {{error.message}}</h1>
+      <h1 class="classy-subtitle classy-end classy-error shadow dotted">Error: {{error.message}}</h1>
     </div>
   </div>
 </template>
@@ -42,10 +76,16 @@
 <script>
   import {BinaryConverter, BinaryToDecimal, DecimalToBinary, Ca2ToDecimalConverter, Ca1ToDecimalConverter, SimpleToDecimalConverter, DecimalToSimpleConverter, DecimalToCa2Converter, DecimalToCa1Converter} from '../utils/BinaryConverter.js'
   import completeBar from '../utils/retro-progress-bar.js'
+  import Button from '@/components/Button.vue'
+  import Input from '@/components/Input.vue'
   import Vuex from 'vuex'
 
   export default {
-    name: 'Menu',  
+    name: 'Menu',
+    components: {
+      Button,
+      Input
+    },
     data() {
       return {
         fromConvertions: [],
@@ -160,38 +200,16 @@
   align-items: center;
 }
 
-/* FIXME: these buttons should be a different component */
-.classy-button {
-  border: 1px solid var(--black);
-  color: var(--black);
-  padding: 10px 20px;
-  text-align: center;
-  font-size: 16px;
-}
-
-.classy-error, .classy-button {
+.classy-error {
   background-color: var(--primaryRed);
 }
 
-.classy-selected-button, .classy-result {
+.classy-result {
   background-color: var(--primaryGreen);
-}
-
-.classy-button:hover, .classy-selected-button:hover {
-  background-color: whitesmoke;
-  cursor: pointer;
 }
 
 .classy-subtitle {
   font-style: italic;
-}
-
-.classy-input {
-  font-size: 3rem;
-  text-align:center;
-  background-color: var(--primaryWhite);
-  border: 1px solid var(--black);
-  margin: 40px 0px;
 }
 
 .classy-bits-input, .menu {
@@ -238,11 +256,23 @@
 
 .classy-end {
   border: 1px solid var(--black);
-  margin: 0 15px;
+  margin: 35px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .classy-warning {
   background-color: var(--primaryYellow);
+}
+
+.form-buttons > Button:not(:first-child) {
+  margin-left: 20px;
+}
+
+@media (max-width: 720px) {
+  .menu {
+    width: 100%;
+  }
 }
 </style>
 

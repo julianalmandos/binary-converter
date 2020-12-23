@@ -8,7 +8,7 @@ export default function move(elem) {
                 resolve('finished');
             } else {
                 width++; 
-                elem.style.width = width + '%'; 
+                elem.style.width = `${width}%`;
             }
         }
     });

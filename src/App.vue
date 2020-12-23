@@ -2,41 +2,42 @@
   <div id="app">
     <div class="main-content">
       <div class="classy-menu classy-right-menu">
-        <button class="classy-menu-button classy-shadow dotted">_</button>
-        <button class="classy-menu-button classy-shadow dotted">■</button>
-        <button class="classy-menu-button classy-shadow dotted">X</button>
+        <Button :theme="'grey'">_</Button>
+        <Button :theme="'grey'">■</Button>
+        <Button :theme="'grey'">X</Button>
       </div>
       <div class="classy-menu classy-left-menu">
-        <button class="classy-menu-button classy-shadow dotted">Records</button>
-        <button class="classy-menu-button classy-shadow dotted">Language</button>
-        <div class="classy-dropdown" v-if="showDropdown">
-          <button class="classy-menu-button classy-shadow dotted">Record</button>
-          <button class="classy-menu-button classy-shadow dotted">Language</button>
-        </div>
+        <router-link to="/"><Button :theme="'yellow'">Home</Button></router-link>
+        <router-link to="/records"><Button :theme="'yellow'">Records</Button></router-link>
+        <Button :theme="'blue'" @click="openDropdown">Language ▼</Button>
       </div>
       <router-view class="view"/>
     </div>
     <div class="classy-bottom-bar">
-      <span>Made with ♥ by <a class="classy-link" href="http://github.com/julianalmandos">Julian Luis Almandos</a> in 2019-2020</span>
+      <span>Made with ♥ by <a class="classy-link" target="_blank" href="http://github.com/julianalmandos">Julian Luis Almandos</a> in 2019-2020</span>
     </div>
   </div>
 </template>
 
 <script>
+import Button from '@/components/Button.vue'
 
-  export default {
-    name: 'App',
-    data() {
-      return {
-        showDropdown: false,
-      }
-    },
-    methods: {
-      openDropdown(){
-        this.showDropdown=!this.showDropdown;
-      }
+export default {
+  name: 'App',
+  components: {
+    Button
+  },
+  data() {
+    return {
+      showDropdown: false,
+    }
+  },
+  methods: {
+    openDropdown(){
+      console.log('Opened!');
     }
   }
+}
 
 </script>
 
@@ -54,16 +55,6 @@
   
 }
 
-body, html {
-  box-sizing: border-box;
-  margin: 0;
-  background-image: var(--dotBackground);
-}
-
-button, input { 
-  font-family: inherit;
-}
-
 .classy-menu {
   position: absolute;
   display: flex;
@@ -77,17 +68,19 @@ button, input {
 
 .classy-right-menu {
   right: 5%;
+  pointer-events: none;
 }
 
-.classy-left-menu > .classy-menu-button:not(:first-child) {
+.classy-left-menu > *:not(:first-child) {
   margin-top: 15px;
 }
 
-.classy-right-menu > .classy-menu-button:not(:first-child) {
+.classy-right-menu > Button:not(:first-child) {
   margin-left: 15px;
 }
 
 .classy-link {
+  text-decoration: underline;
   color: var(--black);
 }
 
@@ -105,19 +98,9 @@ button, input {
   flex: 1 1 100%;
 }
 
-.classy-menu-button {
-  background-color: grey;
-  border: 1px solid var(--black);
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  font-size: 16px;
-}
-
-.classy-menu-button:hover {
-  background-color: white;
-  color: var(--black);
-  cursor: pointer;
+.router-link-exact-active > Button::after {
+  content: '*';
+  font-weight: bold;
 }
 
 /*FIXME: decide what to do with the menu in mobile sizes*/

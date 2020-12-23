@@ -1,6 +1,6 @@
 <template>
   <div class="introduction">
-    <span class="logo classy-shadow">001001001</span>
+    <span class="logo shadow">001001001</span>
     <h1>Binary-Decimal Converter</h1>
     <h4>Choose between Ca2, Ca1, etc. and operate in both integer and floating point.</h4>
   </div>
