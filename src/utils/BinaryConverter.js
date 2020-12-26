@@ -1,294 +1,205 @@
 import {InsufficientBits} from './Exceptions.js';
 
 export class BinaryConverter {
-    convertions=[];
-
-    getConvertions() {
-        return [new BinaryToDecimal(),new DecimalToBinary()];
+    static getConvertions() {
+        return [BinaryToDecimal, DecimalToBinary];
     }
 }
 
-export class ConverterStrategy{
+export class ConverterStrategy {
 
-    revertChain(chain){
-        //Can't change single characters in strings. I use #split() to convert it to an array and then #join() to make a string again.
-        console.log('entra '+chain);
-        chain=chain.split('');        
-        for(let i=0;i<chain.length;i++){
-            if(chain[i]=='0'){
-                chain[i]='1';
-            }else{
-                chain[i]='0';
-            }
-        }
-        console.log('sale '+chain.join(''));
-        chain=chain.join('');
-        return chain;
+    static validateChain(chain) {
+        return chain != '' && !isNaN(parseInt(chain)) && this.isBinary(chain);
+    }
+
+    static revertChain(chain) {
+        return chain.split('')
+            .map(digit => digit == 0 ? 1 : 0)
+            .join('');
+    }
+
+    static getName() {
+        throw new Error('You should define #getName');
     }
     
+    static convert() {
+        throw new Error('You should define #convert.');
+    }
 }
 
-export class BinaryToDecimal extends ConverterStrategy{
-    name='Binary';
-    
-    getConvertions() {
-        return [new SimpleToDecimalConverter(), new Ca1ToDecimalConverter(), new Ca2ToDecimalConverter()];
+export class BinaryToDecimal extends ConverterStrategy {
+
+    static getName() {
+        return 'Binary';
     }
     
-    //Will be done in the view
-    isFromDecimal() {
+    static getConvertions() {
+        return [SimpleToDecimalConverter, Ca1ToDecimalConverter, Ca2ToDecimalConverter];
+    }
+    
+    static isFromDecimal() {
         return false;
     }
 
-    //It's the same for all strategies
-    validateChain(chain){
-        return chain!='' && !isNaN(parseInt(chain)) && this.isBinary(chain);
+    static validateChain(chain) {
+        return chain != '' && !isNaN(parseInt(chain)) && this.isBinary(chain);
     }
 
-    //It's the same for all strategies
-    isBinary(chain){
-        for(let i=0;i<chain.length;i++){
-            console.log('entra');
-            if(chain[i]!='0' && chain[i]!='1'){
+    static isBinary(chain) {
+        for (let i = 0; i < chain.length; i++) {
+            if (chain[i] != '0' && chain[i] != '1'){
                 return false;
             }
         }
         return true;
     }
+
+    static convert(chain) {
+        let returnNumber = 0;
+        chain = chain.split('').reverse().join('');
+        for (let i = 0; i < chain.length; i++) {
+            if (chain[i] == '1') {
+                returnNumber = returnNumber + Math.pow(2, i);
+            }
+        }
+    }
 }
 
-export class DecimalToBinary extends ConverterStrategy{
-    name='Decimal';
+export class DecimalToBinary extends ConverterStrategy {
 
-    getConvertions() {       
-        return [new DecimalToSimpleConverter(), new DecimalToCa1Converter(), new DecimalToCa2Converter()];
+    static getName() {
+        return 'Decimal';
     }
 
-    //Will be done in the view
-    isFromDecimal() {
+    static getConvertions() {
+        return [DecimalToSimpleConverter, DecimalToCa1Converter, DecimalToCa2Converter];
+    }
+
+    static isFromDecimal() {
         return true;
     }
 
-    divideNumber(number){
-        var newChain='';
-        while(number!=0){
-            newChain=(number % 2)+newChain;
-            number= Math.floor(number/2);
+    static validateChain(chain) {
+        return chain != '' && !isNaN(parseInt(chain));
+    }
+
+    static divideNumber(number) {
+        let newChain = '';
+        while (number != 0) {
+            newChain = (number % 2) + newChain;
+            number = Math.floor(number / 2);
         }
         return newChain;
     }
 
-    completeWithZeros(chain,bits){
-        while(chain.length!=bits){
-            chain='0'+chain;
-        }
-        return chain;
-    }
-
-    validateChain(chain){
-        //Should I check for the empty string in the view?
-        return chain!='' && !isNaN(parseInt(chain));
+    static completeWithZeros(chain, bits) {
+        return (new Array(bits - chain.length)).fill('0').join('') + chain;
     }
 }
 
 //FROM BINARY TO DECIMAL
-export class Ca2ToDecimalConverter extends BinaryToDecimal{
-    name='Ca2';
+export class Ca2ToDecimalConverter extends BinaryToDecimal {
 
-    convert(chain,base){
-        if(chain[0]=='0'){
-            //Same as Simple to Decimal
-            var returnNumber=0;
-            var chainArrayLength=chain.length-1;
-            /*
-            Take for example the chain 001101, that represents number 13 in decimal.
-            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
-            i=4 -> 0^1
-            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
-            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
-            i=1 -> 0^4
-            i=0 -> 0^5
-            */
-            for(let i=chainArrayLength;i>=0;i--){
-                if(chain[i]=='1'){
-                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
-                }            
-            }
+    static getName() {
+        return 'Ca2';
+    }
 
-            return returnNumber;
-        }else{
-            //Searching for the first '1' from right to left
-            var i=chain.length-1;
-            var firstPart=[];
-            console.log(i);
-            while(chain[i]!='1'){
-                firstPart.unshift(chain[i]);
-                i--;
-            }
-            firstPart.unshift(chain[i]);
-            firstPart.unshift(this.revertChain(chain.substring(0,i)).split(''));
-            chain=firstPart.flat().join('');
-            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
-            var returnNumber=0;
-            var chainArrayLength=chain.length-1;
-            /*
-            Take for example the chain 001101, that represents number 13 in decimal.
-            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
-            i=4 -> 0^1
-            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
-            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
-            i=1 -> 0^4
-            i=0 -> 0^5
-            */
-            for(let i=chainArrayLength;i>=0;i--){
-                if(chain[i]=='1'){
-                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
-                }            
-            }
-            
-            return returnNumber*(-1);
+    static convert(chain) {
+        const isNegative = chain[0] == '1';
+        if (isNegative) {
+            const firstOneIndex = chain.lastIndexOf('1');
+            const firstPart = this.revertChain(chain.substring(0, firstOneIndex)).split('');
+            chain = firstPart.concat(chain.substring(firstOneIndex).split('')).join('');
         }
+        let returnNumber = super.convert(chain);
+        return isNegative ? returnNumber * (-1) : returnNumber;
     }
 }
 
-export class Ca1ToDecimalConverter extends BinaryToDecimal{
-    name='Ca1';
+export class Ca1ToDecimalConverter extends BinaryToDecimal {
 
-    convert(chain,base){
-        if(chain[0]=='0'){
-            //Same as Simple to Decimal
-            var returnNumber=0;
-            var chainArrayLength=chain.length-1;
-            /*
-            Take for example the chain 001101, that represents number 13 in decimal.
-            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
-            i=4 -> 0^1
-            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
-            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
-            i=1 -> 0^4
-            i=0 -> 0^5
-            */
-            for(let i=chainArrayLength;i>=0;i--){
-                if(chain[i]=='1'){
-                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
-                }            
-            }
+    static getName() {
+        return 'Ca1';
+    }
 
-            return returnNumber;
-        }else{
-            //Invertir números
-            chain=this.revertChain(chain);
-            //Debería usarse un método heredado que haga lo mismo que el Simple-to-Decimal
-            var returnNumber=0;
-            var chainArrayLength=chain.length-1;
-            /*
-            Take for example the chain 001101, that represents number 13 in decimal.
-            i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
-            i=4 -> 0^1
-            i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
-            i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
-            i=1 -> 0^4
-            i=0 -> 0^5
-            */
-            for(let i=chainArrayLength;i>=0;i--){
-                if(chain[i]=='1'){
-                    returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
-                }            
-            }
-
-            //Make negative
-            return returnNumber*(-1);
+    static convert(chain){
+        const isNegative = chain[0] == '1';
+        if (isNegative) {
+            chain = this.revertChain(chain);
         }
+        let returnNumber = super.convert(chain);
+        return isNegative ? returnNumber * (-1) : returnNumber;
     }
 }
 
-export class SimpleToDecimalConverter extends BinaryToDecimal{
-    name='Simple';
+export class SimpleToDecimalConverter extends BinaryToDecimal {
 
-    convert(chain,base){
-        var returnNumber=0;
-        var chainArrayLength=chain.length-1;
-        /*
-        Take for example the chain 001101, that represents number 13 in decimal.
-        i=5 -> 2^0 = 2^((chain.length-1)-i) = 2^(5-5) = 2^0
-        i=4 -> 0^1
-        i=3 -> 2^2 = 2^((chain.length-1)-i) = 2^(5-3) = 2^2
-        i=2 -> 2^3 = 2^((chain.length-1)-i) = 2^(5-2) = 2^3
-        i=1 -> 0^4
-        i=0 -> 0^5
-        */
-        for(let i=chainArrayLength;i>=0;i--){
-            if(chain[i]=='1'){
-                returnNumber=returnNumber+Math.pow(2,chainArrayLength-i);
-            }            
-        }
-
-        return returnNumber;
+    static getName() {
+        return 'Simple';
     }
 }
 
 
 //FROM DECIMAL TO BINARY
-export class DecimalToCa2Converter extends DecimalToBinary{
-    name='Ca2';
+export class DecimalToCa2Converter extends DecimalToBinary {
 
-    convert(chain,bits){
-        //Parse to Int since chain comes as a String
-        var newChain;
-        var number=parseInt(chain);
-        bits=bits-1;
-        if((Math.pow(2,bits)-1)>=number){
-            //Keep dividing by 2 until the number=0
-            newChain=this.divideNumber(number);
-            
-            //Complete with 0's till 16 digits.
-            return this.completeWithZeros(newChain,bits+1);
+    static getName() {
+        return 'Ca2';
+    }
+
+    static convert(chain, bits) {
+        let newChain;
+        let number=parseInt(chain);
+        if ((Math.pow(2, bits - 1) - 1) >= number) {
+            newChain = this.divideNumber(number);
+            return this.completeWithZeros(newChain, bits);
         }
         
-        throw new InsufficientBits(bits+1);
+        throw new InsufficientBits(bits);
     }
 }
 
 export class DecimalToCa1Converter extends DecimalToBinary{
-    name='Ca1';
 
-    convert(chain,bits){
-        //Parse to Int since chain comes as a String
-        var newChain;
-        var number=parseInt(chain);
-        if(number<0){number=number*(-1)}
-        bits=bits-1; //I should only do this if the number is positive
-        if((Math.pow(2,bits)-1)>=number){
-            //Keep dividing by 2 until the number=0
-            newChain=this.divideNumber(number);
-            //Complete with 0's till 16 digits.
-            if(chain>=0){return this.completeWithZeros(newChain,bits+1);}
-            return this.revertChain(this.completeWithZeros(newChain,bits+1));
+    static getName() {
+        return 'Ca1';
+    }
+
+    static convert(chain, bits) {
+        let number = parseInt(chain);
+        if (number < 0) {
+            number = number * (-1)
+        }
+        if ((Math.pow(2, bits - 1) - 1) >= number) {
+            let newChain = this.completeWithZeros(this.divideNumber(number), bits);
+            if (chain >= 0) {
+                return newChain;
+            }
+            return this.revertChain(newChain);
             
         }
         
-        throw new InsufficientBits(bits+1);
+        throw new InsufficientBits(bits);
     }
 }
 
 export class DecimalToSimpleConverter extends DecimalToBinary{
-    name='Simple';
 
-    convert(chain,bits){
-        //Parse to Int since chain comes as a String
-        var newChain;
-        var number=parseInt(chain);
+    static getName() {
+        return 'Simple';
+    }
+
+    static convert(chain, bits) {
+        let number=parseInt(chain);
         if((Math.pow(2,bits)-1)>=number){
-            //Keep dividing by 2 until the number=0
-            newChain=this.divideNumber(number);
-            //Complete with 0's till 16 digits.
+            let newChain=this.divideNumber(number);
             return this.completeWithZeros(newChain,bits);
         }
         
         throw new InsufficientBits(bits);
     }
 
-    validateChain(chain){
+    static validateChain(chain) {
         return chain>=0 && super.validateChain(chain);
     }
 }

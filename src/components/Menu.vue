@@ -5,9 +5,9 @@
       <Button
         :theme="convertion.selected ? 'green' : null"
         v-for="convertion in fromConvertions"
-        :key="convertion.name"
+        :key="convertion.getName()"
         @click="selectFromConvertion(convertion)"
-      >{{convertion.name}}</Button>
+      >{{convertion.getName()}}</Button>
     </div>
     <div v-if="toConvertions.length!=0">
       <h2 class="classy-subtitle">{{fromSelected.isFromDecimal() ? 'to' : 'with chain type'}}</h2>
@@ -15,9 +15,9 @@
         <Button
           :theme="convertion.selected ? 'green' : null"
           v-for="convertion in toConvertions"
-          :key="convertion.name"
+          :key="convertion.getName()"
           @click="selectToConvertion(convertion)"
-        >{{convertion.name}}</Button>
+        >{{convertion.getName()}}</Button>
       </div>
     </div>
     <div v-if="toSelected!=null">
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-  import {BinaryConverter, BinaryToDecimal, DecimalToBinary, Ca2ToDecimalConverter, Ca1ToDecimalConverter, SimpleToDecimalConverter, DecimalToSimpleConverter, DecimalToCa2Converter, DecimalToCa1Converter} from '../utils/BinaryConverter.js'
+  import {BinaryConverter} from '../utils/BinaryConverter.js'
   import completeBar from '../utils/retro-progress-bar.js'
   import Button from '@/components/Button.vue'
   import Input from '@/components/Input.vue'
@@ -101,11 +101,9 @@
       }
     },
     mounted() {
-      var binaryConvertions=new BinaryConverter().getConvertions();
+      var binaryConvertions = BinaryConverter.getConvertions();
 
-      binaryConvertions.forEach(convertion => {
-        convertion.selected=false;
-      })
+      BinaryConverter.prototype.selected = false;
 
       this.fromConvertions=binaryConvertions;
     },
@@ -115,20 +113,17 @@
       ]),
       //Load secondary convertions when selecting an option
       selectFromConvertion(convertion){
-        this.fromConvertions.forEach(convertion => {
-          convertion.selected=false;
-        })
-        //Would be good to select or not in the same function
-        convertion.selected=true;
+        this.fromConvertions.forEach(conv => {
+          conv.selected = conv === convertion;
+        });
         this.fromSelected=convertion;
         this.resetToSelection();
         this.toConvertions=convertion.getConvertions();
       },
       selectToConvertion(convertion){
-        this.toConvertions.forEach(convertion => {
-          convertion.selected=false;
+        this.toConvertions.forEach(conv => {
+          conv.selected = conv === convertion;
         })
-        convertion.selected=true;
         this.toSelected=convertion;
       },
       resetToSelection(){
@@ -152,13 +147,13 @@
         this.error=null;
         this.resultError=null;
         //Validates the chain, then converts if valid
-        if(this.toSelected.validateChain(this.chain)){
-          if(this.bits!='' | (!this.fromSelected.isFromDecimal())){
-            if(this.bits<=32){
+        if(this.bits!='' || (!this.fromSelected.isFromDecimal())){
+          if(this.bits<=32){
+            if(this.toSelected.validateChain(this.chain)){
               this.showLoadingBar=true;
               await completeBar(this.$refs.progressBar)
                 .then(result => {
-                  this.result=this.toSelected.convert(this.chain,this.bits);
+                  this.result = this.toSelected.convert(this.chain,this.bits);;
                   this.recordOperation();
                 })
                 .catch(error => {
@@ -169,23 +164,24 @@
                 })
             }else{
               //Shows error if the chain is invalid
-              this.error={message:'can\'t generate numbers with >32 bits'};
+              this.error={message:'invalid chain'};
             }
           }else{
-            this.error={message:'please specify the number of bits'};
+            //Shows error if the chain is invalid
+            this.error={message:'can\'t generate numbers with >32 bits'};
           }
         }else{
-          //Shows error if the chain is invalid
-          this.error={message:'invalid chain'};
+          this.error={message:'please specify the number of bits'};
         }
       },
       recordOperation(){
         this.addRecordAction({
-          from: this.fromSelected.name,
-          to: this.toSelected.name,
+          from: this.fromSelected.getName(),
+          to: this.toSelected.getName(),
           chain: this.chain,
           bits: this.bits,
           result: this.result,
+          date: new Date()
         })
       }
     }
@@ -212,12 +208,8 @@
   font-style: italic;
 }
 
-.classy-bits-input, .menu {
+.classy-bits-input, .menu, .classy-number-input {
   width:60%;
-}
-
-.classy-number-input {
-  width:50%;
 }
 
 .classy-small-input {
