@@ -7,20 +7,21 @@
         <Button :theme="'grey'">X</Button>
       </div>
       <div class="classy-menu classy-left-menu">
-        <router-link to="/"><Button :theme="'yellow'">Home</Button></router-link>
-        <router-link to="/records"><Button :theme="'yellow'">Records</Button></router-link>
-        <Button :theme="'blue'" @click="openDropdown">Language ▼</Button>
+        <router-link to="/"><Button :theme="'yellow'">{{currentLanguage.home}}</Button></router-link>
+        <router-link to="/records"><Button :theme="'yellow'">{{currentLanguage.records}}</Button></router-link>
+        <Button :theme="'blue'" @click="openDropdown">{{currentLanguage.language}} ▼</Button>
       </div>
       <router-view class="view"/>
     </div>
     <div class="classy-bottom-bar">
-      <span>Made with ♥ by <a class="classy-link" target="_blank" href="http://github.com/julianalmandos">Julian Luis Almandos</a> in 2019-2020</span>
+      <span>{{currentLanguage.madeWithLove}} <a class="classy-link" target="_blank" href="http://github.com/julianalmandos">Julian Luis Almandos</a> {{currentLanguage.madeInDate}}</span>
     </div>
   </div>
 </template>
 
 <script>
 import Button from '@/components/Button.vue'
+import Vuex from 'vuex'
 
 export default {
   name: 'App',
@@ -31,6 +32,11 @@ export default {
     return {
       showDropdown: false,
     }
+  },
+  computed: {
+    ...Vuex.mapState([
+      'currentLanguage'
+    ]),
   },
   methods: {
     openDropdown(){

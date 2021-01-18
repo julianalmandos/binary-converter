@@ -1,14 +1,21 @@
 <template>
   <div class="introduction">
     <span class="logo shadow">001001001</span>
-    <h1>Binary-Decimal Converter</h1>
-    <h4>Choose between Ca2, Ca1, etc. and operate in both integer and floating point.</h4>
+    <h1>{{currentLanguage.binaryDecimalConverter}}</h1>
+    <h4>{{currentLanguage.chooseBetweenTypes}}</h4>
   </div>
 </template>
 
 <script>
+import Vuex from 'vuex'
+
 export default {
-  name: 'Introduction'
+  name: 'Introduction',
+  computed: {
+    ...Vuex.mapState([
+      'currentLanguage'
+    ]),
+  }
 }
 </script>
 

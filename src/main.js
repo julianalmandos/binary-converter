@@ -5,10 +5,13 @@ import store from './store'
 
 require('@/assets/main.css');
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 new Vue({
   router,
   store,
+  beforeMount() {
+    this.$store.dispatch('setLanguage');
+  },
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');

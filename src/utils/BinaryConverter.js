@@ -29,8 +29,8 @@ export class ConverterStrategy {
 
 export class BinaryToDecimal extends ConverterStrategy {
 
-    static getName() {
-        return 'Binary';
+    static getLanguageKey() {
+        return 'binary';
     }
     
     static getConvertions() {
@@ -62,13 +62,14 @@ export class BinaryToDecimal extends ConverterStrategy {
                 returnNumber = returnNumber + Math.pow(2, i);
             }
         }
+        return returnNumber;
     }
 }
 
 export class DecimalToBinary extends ConverterStrategy {
 
-    static getName() {
-        return 'Decimal';
+    static getLanguageKey() {
+        return 'decimal';
     }
 
     static getConvertions() {
@@ -100,8 +101,8 @@ export class DecimalToBinary extends ConverterStrategy {
 //FROM BINARY TO DECIMAL
 export class Ca2ToDecimalConverter extends BinaryToDecimal {
 
-    static getName() {
-        return 'Ca2';
+    static getLanguageKey() {
+        return 'ca2';
     }
 
     static convert(chain) {
@@ -118,8 +119,8 @@ export class Ca2ToDecimalConverter extends BinaryToDecimal {
 
 export class Ca1ToDecimalConverter extends BinaryToDecimal {
 
-    static getName() {
-        return 'Ca1';
+    static getLanguageKey() {
+        return 'ca1';
     }
 
     static convert(chain){
@@ -134,8 +135,8 @@ export class Ca1ToDecimalConverter extends BinaryToDecimal {
 
 export class SimpleToDecimalConverter extends BinaryToDecimal {
 
-    static getName() {
-        return 'Simple';
+    static getLanguageKey() {
+        return 'simple';
     }
 }
 
@@ -143,8 +144,8 @@ export class SimpleToDecimalConverter extends BinaryToDecimal {
 //FROM DECIMAL TO BINARY
 export class DecimalToCa2Converter extends DecimalToBinary {
 
-    static getName() {
-        return 'Ca2';
+    static getLanguageKey() {
+        return 'ca2';
     }
 
     static convert(chain, bits) {
@@ -161,8 +162,8 @@ export class DecimalToCa2Converter extends DecimalToBinary {
 
 export class DecimalToCa1Converter extends DecimalToBinary{
 
-    static getName() {
-        return 'Ca1';
+    static getLanguageKey() {
+        return 'ca1';
     }
 
     static convert(chain, bits) {
@@ -185,17 +186,16 @@ export class DecimalToCa1Converter extends DecimalToBinary{
 
 export class DecimalToSimpleConverter extends DecimalToBinary{
 
-    static getName() {
-        return 'Simple';
+    static getLanguageKey() {
+        return 'simple';
     }
 
     static convert(chain, bits) {
-        let number=parseInt(chain);
-        if((Math.pow(2,bits)-1)>=number){
-            let newChain=this.divideNumber(number);
+        let number = parseInt(chain);
+        if ((Math.pow(2, bits)-1) >= number) {
+            let newChain = this.divideNumber(number);
             return this.completeWithZeros(newChain,bits);
         }
-        
         throw new InsufficientBits(bits);
     }
 
