@@ -8,6 +8,10 @@ export class BinaryConverter {
 
 export class ConverterStrategy {
 
+    static getLanguageExplanationKey() {
+        return this.getLanguageKey() + 'Explanation';
+    }
+
     static validateChain(chain) {
         return chain != '' && !isNaN(parseInt(chain)) && this.isBinary(chain);
     }

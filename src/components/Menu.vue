@@ -21,8 +21,11 @@
       </div>
     </div>
     <div v-if="toSelected!=null">
+      <div class="type-explanation">
+        {{currentLanguage[toSelected.getLanguageExplanationKey()]}}
+      </div>
       <form class="classy-form" @submit.stop.prevent="makeConvertion">
-        <div class="flex-around">
+        <div class="flex-around form-inputs">
           <Input
             :class="[fromSelected.isFromDecimal() ? 'classy-number-input' : 'classy-bits-input']"
             :maxlength="fromSelected.isFromDecimal() ? '' : '16'"
@@ -225,6 +228,14 @@
   align-items: center;
 }
 
+.form-inputs {
+  margin: 40px 0;
+}
+
+.type-explanation {
+  margin-top: 40px;
+}
+
 .classy-progress-bar-container {
   display: flex;
   justify-content: center;
@@ -256,17 +267,21 @@
   background-color: var(--primaryYellow);
 }
 
-.form-buttons > Button:not(:first-child) {
-  margin-left: 20px;
-}
-
-.from-buttons > Button:not(:first-child), .to-buttons > Button:not(:first-child) {
-  margin-left: 10px;
+.form-buttons > Button:not(:first-child),
+.from-buttons > Button:not(:first-child),
+.to-buttons > Button:not(:first-child) {
+  margin-left: 50px;
 }
 
 @media (max-width: 720px) {
   .menu {
     width: 100%;
+  }
+
+  .form-buttons > Button:not(:first-child),
+  .from-buttons > Button:not(:first-child),
+  .to-buttons > Button:not(:first-child) {
+    margin-left: 10px;
   }
 }
 </style>

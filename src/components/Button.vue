@@ -1,5 +1,5 @@
 <template>
-  <button @click="$emit('click')" :class="getClasses">
+  <button @click="$emit('click')" :class="getClasses" ref="button">
     <slot></slot>
   </button>
 </template>
@@ -13,7 +13,11 @@
 export default {
   name: 'Button',
   props: {
-    theme: String
+    theme: String,
+    animated: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -26,7 +30,7 @@ export default {
   },
   computed: {
     getClasses() {
-      return [...this.baseClasses, this.theme];
+      return [...this.baseClasses, this.theme, this.animated ? 'animated' : null];
     }
   }
 }
@@ -44,6 +48,11 @@ export default {
   background-color: var(--primaryRed);
   display: block;
   width: 100%;
+}
+
+.animated:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
 }
 
 .button:hover {
@@ -70,6 +79,14 @@ export default {
 
 .blue {
   background-color: #79a4d6;
+}
+
+.white {
+  background-color: var(--primaryWhite);
+}
+
+.white:hover {
+  background-color: rgb(219, 219, 219);
 }
 
 </style>

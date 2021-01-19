@@ -24,7 +24,14 @@
     "error": "Error",
     "invalidChain": "invalid chain",
     "specifyNumberOfBits": "please specify the number of bits",
-    "cantGenerate32Bits": "can't generate numbers with >32 bits"
+    "cantGenerate32Bits": "can't generate numbers with >32 bits",
+    "en_US": "English",
+    "es_ES": "Spanish",
+    "seeItOnGitHub": "See it on GitHub!",
+    "followMe": "Follow me!",
+    "ca1Explanation": "The ones' complement of a binary number is defined as the value obtained by inverting all the bits in the binary representation of the number (swapping 0s and 1s). The ones' complement of the number then behaves like the negative of the original number in some arithmetic operations.",
+    "ca2Explanation": "The two's complement of an N-bit number is defined as its complement with respect to 2^N; the sum of a number and its two's complement is 2^N. For instance, for the three-bit number 010, the two's complement is 110, because 010 + 110 = 8 which is equal to 2^3. The two's complement is calculated by inverting the bits and adding one.",
+    "simpleExplanation": "In mathematics and digital electronics, a binary number is a number expressed in the base-2 numeral system or binary numeral system, which uses only two symbols: typically zero (0) and one (1)."
   },
   "es_ES": {
     "binaryDecimalConverter": "Conversor Binario-Decimal",
@@ -34,7 +41,7 @@
     "withChainType": "de tipo",
     "home": "Inicio",
     "records": "Historial",
-    "language": "Lenguaje",
+    "language": "Idioma",
     "madeWithLove": "Hecho con ♥ por",
     "madeInDate": "en 2019-2020",
     "binary": "Binario",
@@ -51,6 +58,13 @@
     "error": "Error",
     "invalidChain": "cadena inválida",
     "specifyNumberOfBits": "por favor, especifique el número de bits",
-    "cantGenerate32Bits": "no se pueden generar cadenas de más de 32 bits"
+    "cantGenerate32Bits": "no se pueden generar cadenas de más de 32 bits",
+    "en_US": "Inglés",
+    "es_ES": "Español",
+    "seeItOnGitHub": "Miralo en GitHub!",
+    "followMe": "Seguime!",
+    "ca1Explanation": "El complemento a uno de un número binario se define como el valor obtenido al invertir todos los bits en la representación binaria del número (intercambiando 0 por 1 y viceversa). Los complementos del número se componen como el negativo del número original, en algunas operaciones aritméticas.",
+    "ca2Explanation": "El complemento a dos de un número binario de N bits se define como su complemento con respecto a 2^N; la suma de un número y su complemento a dos da como resultado 2^N. Por ejemplo, para el número de tres bits 010, el complemento a dos es 110, ya que 010 + 110 = 8 que es igual a 2^3. El complemento a dos es calculado invirtiendo los bits y sumando uno.",
+    "simpleExplanation": "El sistema binario es un sistema de numeración en el que los números son representados utilizando únicamente dos cifras: cero (0) y uno (1). Es uno de los sistemas que más se utilizan en las computadoras, debido a que estas trabajan internamente con dos niveles de voltaje y su uso resulta natural."
   }
 }

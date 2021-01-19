@@ -28,7 +28,11 @@ export default {
   text-align:center;
   background-color: var(--primaryWhite);
   border: 1px solid var(--black);
-  margin: 40px 0px;
+}
+
+.input:focus {
+  box-shadow: none;
+  transform: translate(3px, 3px);
 }
 
 @media (max-width: 720px) {
