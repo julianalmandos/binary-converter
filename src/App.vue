@@ -190,6 +190,14 @@ export default {
   display: block;
 }
 
+.view {
+  padding: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 /*FIXME: decide what to do with the menu in mobile sizes*/
 @media (max-width: 720px) {
   .classy-menu {

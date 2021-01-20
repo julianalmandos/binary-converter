@@ -12,7 +12,7 @@ export default new Vuex.Store({
     currentLanguage: {}
   },
   mutations: {
-    addRecordMutation(state, record){
+    addRecord(state, record){
       state.records.push(record);
       console.log(state.records);
     },
@@ -22,8 +22,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addRecordAction({commit}, record){
-      commit('addRecordMutation', record);
+    addRecord({commit}, record){
+      commit('addRecord', record);
     },
     setLanguage({commit}, language) {
       if (language) {

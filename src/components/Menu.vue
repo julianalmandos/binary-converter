@@ -49,6 +49,7 @@
             class="shadow dotted"
             :theme="'green'"
             type="submit"
+            ref="generate"
           >{{currentLanguage.generate}}</Button>
           <Button
             class="shadow dotted"
@@ -60,7 +61,7 @@
       </form>
     </div>
     <div class="classy-progress-bar-container" v-show="showLoadingBar">
-      <div class="classy-progress-bar-box shadow">
+      <div class="classy-progress-bar-box">
         <div class="classy-progress-bar dotted" ref="progressBar"></div>
       </div>
     </div>
@@ -113,7 +114,7 @@
     },
     methods: {
       ...Vuex.mapActions([
-        'addRecordAction',
+        'addRecord',
       ]),
       //Load secondary convertions when selecting an option
       selectFromConvertion(convertion) {
@@ -147,6 +148,7 @@
         this.resetToSelection();
       },
       async makeConvertion() {
+        this.$refs.generate.$el.disabled = true;
         this.result = null;
         this.error = null;
         this.resultError = null;
@@ -157,6 +159,7 @@
               this.showLoadingBar = true;
               await completeBar(this.$refs.progressBar)
                 .then(result => {
+                  this.$refs.generate.$el.disabled = false;
                   this.result = this.toSelected.convert(this.chain,this.bits);;
                   this.recordOperation();
                 })
@@ -177,9 +180,9 @@
         }
       },
       recordOperation() {
-        this.addRecordAction({
-          from: this.fromSelected.getName(),
-          to: this.toSelected.getName(),
+        this.addRecord({
+          from: this.fromSelected.getLanguageKey(),
+          to: this.toSelected.getLanguageKey(),
           chain: this.chain,
           bits: this.bits,
           result: this.result,
@@ -247,13 +250,12 @@
   display: flex;
   border: 1px solid var(--black);
   text-align: center;
-  width: 300px;
+  width: 100%;
 }
 
 .classy-progress-bar {
-  height: 24px;
+  height: 15px;
   background-color: var(--black);
-  width: 25%;
 }
 
 .classy-end {

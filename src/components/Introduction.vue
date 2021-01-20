@@ -1,6 +1,5 @@
 <template>
   <div class="introduction">
-    <span class="logo shadow">001001001</span>
     <h1>{{currentLanguage.binaryDecimalConverter}}</h1>
     <h4>{{currentLanguage.chooseBetweenTypes}}</h4>
   </div>

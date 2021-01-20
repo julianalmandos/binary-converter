@@ -20,17 +20,9 @@ export default {
 
 <style>
 
-.home {
-  padding: 5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
 @media (max-width: 720px) {
   .home {
-    padding: 3rem 10px 5rem 10px;
+    padding: 3rem 10px;
   }
 }
 
