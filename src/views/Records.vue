@@ -10,7 +10,6 @@
 
 <script>
 import Record from '@/components/Record.vue'
-import RecordsManager from '@/utils/RecordsManager.js'
 import Vuex from 'vuex'
 
 export default {
