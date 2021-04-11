@@ -17,6 +17,7 @@ Version 1.2 comes with:
     ✅ Mobile version (doesn't include Records && Language selection)!
     ✅ Languages! Choose between English or Spanish dynamically.
     ✅ Records! Keep track of your last convertions with the new Records section.
+    ✅ Descriptions for each binary convertion type.
 
 # Old Features
 
